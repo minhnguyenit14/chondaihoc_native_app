@@ -10,6 +10,8 @@ import { getStorage } from '../../../helper/axiosHelper';
 import { connect } from 'react-redux';
 import { setPageIndex, getResult, setAnswers, setPagesAnswered, getQuestions } from '../../../actions/uniTest';
 import Question from './Question';
+import * as Animatable from 'react-native-animatable';
+import Swiper from 'react-native-swiper';
 
 class Test extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -125,8 +127,9 @@ class Test extends Component {
         );
     }
 
-    scroll = () => {
-        this.scrollView.scrollToPosition(0, 0)
+    makeAnimate = (current, next) => {
+        this.swiper.scrollBy(next-current);
+        this.scrollView.scrollToPosition(0, 0);
     }
 
     checkDisabled = () => {
@@ -136,6 +139,44 @@ class Test extends Component {
                 disabled: false
             });
         }
+    }
+
+    onPageChange = (pageIndex) => {
+        this.props.setPageIndex(pageIndex + 1)
+    }
+
+    renderFlatlist = () => {
+        let { questions } = this.props.uniTest;
+        let temp = []
+        questions.map(q => {
+            temp.push(
+                <Animatable.View
+                    key={q.pageIndex}
+                    animation="bounceInDown"
+                    easing="ease-in-cubic"
+                    direction="alternate"
+                >
+                    <FlatList
+                        data={q.data}
+                        keyExtractor={q => q.QuestionID.toString()}
+                        renderItem={q =>
+                            <Animatable.View
+                                ref={inst => this.questionAnimate = inst}
+                                animation={q.index % 2 === 0 ? 'bounceInRight' : 'bounceInLeft'}
+                            >
+                                <View style={{ paddingHorizontal: vars.padding }}>
+                                    <Question
+                                        onAnswer={this.checkDisabled}
+                                        data={q.item}
+                                        number={q.item.index}
+                                    />
+                                </View>
+                            </Animatable.View>}
+                    />
+                </Animatable.View>
+            )
+        })
+        return temp;
     }
 
     render() {
@@ -151,45 +192,68 @@ class Test extends Component {
         let progress = (isNaN(totalQuestions) || Math.round(answers.length / totalQuestions * 100)) || 0;
         let loadingR = getResultStatus === STATUS.loading;
         let loadingQ = getQuestionsStatus === STATUS.loading;
+
         return (
             <AppContainer
                 scroll={false}
                 scrollRef={inst => this.scrollView = inst}
                 refresher={
-                    <RefreshControl
-                        onRefesh={this.getData}
+                    totalQuestions !== 0 ? null : <RefreshControl
                         refreshing={loadingQ || loadingR}
                         colors={[vars.orange]}
                     />
                 }
                 sticker={
-                    loadingQ ? null : <View style={[styles.status]}>
-                        <ProgressBarAnimated
-                            width={screenWidth}
-                            value={progress}
-                            maxValue={100}
-                            barEasing='bounce'
-                            backgroundColor={vars.orange}
-                            backgroundColorOnComplete={vars.green}
-                        />
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                            <Pagination onPageChange={this.scroll} />
+                    loadingQ ? null :
+                        <View style={[styles.status]}>
+                            <ProgressBarAnimated
+                                width={screenWidth}
+                                value={progress}
+                                maxValue={100}
+                                barEasing='bounce'
+                                backgroundColor={vars.orange}
+                                backgroundColorOnComplete={vars.green}
+                            />
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                <Pagination onPageChange={(current, next) => this.makeAnimate(current, next)} />
+                            </View>
                         </View>
-                    </View>
                 }
             >
                 {loadingQ ||
-                    <FlatList
-                        data={questions}
-                        keyExtractor={q => q.QuestionID.toString()}
-                        renderItem={q => <View style={{ paddingHorizontal: vars.padding }}>
-                            <Question
-                                onAnswer={this.checkDisabled}
-                                data={q.item}
-                                number={q.item.index}
-                            />
-                        </View>}
-                    />
+
+                    <Swiper
+                        ref={inst => this.swiper = inst}
+                        showsPagination={false}
+                        onIndexChanged={this.onPageChange}
+                    >
+
+                        {this.renderFlatlist()}
+                    </Swiper>
+
+                    // <Animatable.View
+                    //     animation="bounceInDown"
+                    //     easing="ease-in-cubic"
+                    //     direction="alternate"
+                    // >
+                    //     <FlatList
+                    //         data={questions}
+                    //         keyExtractor={q => q.QuestionID.toString()}
+                    //         renderItem={q =>
+                    //             <Animatable.View
+                    //                 ref={inst => this.questionAnimate = inst}
+                    //                 animation={q.index % 2 === 0 ? 'bounceInRight' : 'bounceInLeft'}
+                    //             >
+                    //                 <View style={{ paddingHorizontal: vars.padding }}>
+                    //                     <Question
+                    //                         onAnswer={this.checkDisabled}
+                    //                         data={q.item}
+                    //                         number={q.item.index}
+                    //                     />
+                    //                 </View>
+                    //             </Animatable.View>}
+                    //     />
+                    // </Animatable.View>
                 }
             </AppContainer>
         );

@@ -10,9 +10,10 @@ class Pagination extends Component {
         this.state = {};
     }
 
-    onPageChange = (pageIndex) => {
-        this.props.setPageIndex(pageIndex);
-        this.props.onPageChange();
+    onPageChange = (pIndex) => {
+        let {pageIndex} = this.props.uniTest;
+        this.props.setPageIndex(pIndex);
+        this.props.onPageChange(pageIndex, pIndex);
     }
 
     genPagination = () => {
