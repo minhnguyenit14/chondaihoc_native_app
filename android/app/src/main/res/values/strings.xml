@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">chondaihoc_native_app</string>
+    <color name="white">#FFFFFF</color>
+    <color name="orange">#F6AB2F</color>
+</resources>
