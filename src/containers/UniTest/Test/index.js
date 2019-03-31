@@ -104,32 +104,34 @@ class Test extends Component {
 
     _submit = () => {
         let { answers, questionKind, questionSetID } = this.props.uniTest;
-        let storage = getStorage();
-        let userID = -1;
-        if (storage) {
-            if (storage.userID) {
-                userID = storage.userID;
-            }
-        }
         this.props.navigation.setParams({
             disabled: true
         });
-        this.props.getResult(
-            answers,
-            userID,
-            questionKind,
-            questionSetID,
-            () => {
-                this.props.navigation.setParams({
-                    disabled: false
-                });
+        getStorage().then(
+            storage => {
+                if (storage) {
+                    if (storage.userID) {
+                        userID = storage.userID;
+                    }
+                };
+                this.props.getResult(
+                    answers,
+                    userID,
+                    questionKind,
+                    questionSetID,
+                    () => {
+                        this.props.navigation.setParams({
+                            disabled: false
+                        });
+                    }
+                )
             }
         );
     }
 
     makeAnimate = (current, next) => {
-        this.swiper.scrollBy(next-current);
-        this.scrollView.scrollToPosition(0, 0);
+        this.swiper.scrollBy(next - current);
+        this.questionAnimate.bounce(500).then(() => this.scrollView.scrollToPosition(0, 0));
     }
 
     checkDisabled = () => {
@@ -171,7 +173,8 @@ class Test extends Component {
                                         number={q.item.index}
                                     />
                                 </View>
-                            </Animatable.View>}
+                            </Animatable.View>
+                        }
                     />
                 </Animatable.View>
             )
@@ -198,7 +201,8 @@ class Test extends Component {
                 scroll={false}
                 scrollRef={inst => this.scrollView = inst}
                 refresher={
-                    totalQuestions !== 0 ? null : <RefreshControl
+                    <RefreshControl
+                        enabled={false}
                         refreshing={loadingQ || loadingR}
                         colors={[vars.orange]}
                     />
@@ -207,6 +211,7 @@ class Test extends Component {
                     loadingQ ? null :
                         <View style={[styles.status]}>
                             <ProgressBarAnimated
+                                backgroundAnimationDuration={1500}
                                 width={screenWidth}
                                 value={progress}
                                 maxValue={100}
