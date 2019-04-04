@@ -269,9 +269,11 @@ class UniSearch extends PureComponent {
                         data={universities}
                         keyExtractor={d => d.UniversityID + ""}
                         renderItem={(d) => <Animatable.View
-                            animation="fadeIn"
+                            useNativeDriver
+                            animation="bounceInDown"
                             easing="ease-in-cubic"
                             direction="alternate"
+                            duration={800}
                         >
                             <UniRow
                                 navigation={this.props.navigation}

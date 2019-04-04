@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, AppContainer, Heading, Text, Input } from '../../common';
-import { View, FlatList, RefreshControl, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, FlatList, RefreshControl, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { Icon as Icon4 } from 'react-native-elements';
 import { QUERY_HELPER } from '../../helper/queryHelper';
@@ -168,7 +168,7 @@ class Blog extends Component {
     }
 
     hide = () => {
-        this.searchBar.bounceOutLeft(1000).then(() => this.setState({ showSearchBar: false }))
+        this.searchBar.bounceOutLeft(500).then(() => this.setState({ showSearchBar: false }))
     }
 
     render() {
@@ -195,14 +195,14 @@ class Blog extends Component {
                 />}
                 sticker={
                     showSearchBar ? <Animatable.View
+                        useNativeDriver
                         ref={inst => this.searchBar = inst}
                         style={[
                             ViewStyles.flexCenter,
                             styles.sticker,
                         ]}
                         animation={showSearchBar ? 'bounceInRight' : 'bounceOutLeft'}
-                        direction='normal'
-                        duration={1000}
+                        direction="alternate"
                         easing="ease-in-cubic"
                     >
                         <View style={[ViewStyles.flexDirectionRow, { width: '80%', position: 'relative' }]}>
@@ -227,13 +227,8 @@ class Blog extends Component {
                     </Animatable.View> : null
                 }
             >
-                <Animatable.View
-
-                    animation='bounceInDown'
-                    direction='alternate'
-                    easing="ease-in-cubic"
-                >
-                    {showSearchBar && <View style={{
+                {showSearchBar && <TouchableWithoutFeedback onPress={this.hide}>
+                    <View style={{
                         backgroundColor: 'black',
                         opacity: .6,
                         position: 'absolute',
@@ -241,30 +236,36 @@ class Blog extends Component {
                         height: '100%',
                         zIndex: 100
                     }}
-                    >
-                    </View>
-                    }
-                    <View style={[{ width: '100%', marginTop: vars.margin }]}>
-                        <FlatList
-                            ListEmptyComponent={!searchLoading &&
-                                <View style={ViewStyles.flexCenterHorrizontal}>
-                                    <Text>
-                                        Không tìm thấy kết quả nào!
+                    />
+                </TouchableWithoutFeedback>
+                }
+                <View style={[{ width: '100%', marginTop: vars.margin }]}>
+                    <FlatList
+                        ListEmptyComponent={!searchLoading &&
+                            <View style={ViewStyles.flexCenterHorrizontal}>
+                                <Text>
+                                    Không tìm thấy kết quả nào!
                                     </Text>
-                                </View>
-                            }
-                            data={blogData}
-                            keyExtractor={b => b.ArticleID.toString()}
-                            renderItem={(b) =>
+                            </View>
+                        }
+                        data={blogData}
+                        keyExtractor={b => b.ArticleID.toString()}
+                        renderItem={(b) =>
+                            <Animatable.View
+                                useNativeDriver
+                                animation='bounceInDown'
+                                direction='alternate'
+                                easing="ease-in-cubic"
+                                duration={800}
+                            >
                                 <BlogRow
                                     navigation={this.props.navigation}
                                     data={b.item}
                                 />
-                            }
-                        />
-                    </View>
-
-                </Animatable.View>
+                            </Animatable.View>
+                        }
+                    />
+                </View>
                 {btnShowMore}
             </AppContainer>
         );

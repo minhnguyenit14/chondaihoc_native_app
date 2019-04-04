@@ -42,7 +42,9 @@ class ResultKind extends PureComponent {
         }
         return (
             <Animatable.View
-                animation='fadeIn'
+                useNativeDriver
+                duration={500}
+                animation='zoomInDown'
                 easing="ease-in-cubic"
                 direction="alternate"
             >

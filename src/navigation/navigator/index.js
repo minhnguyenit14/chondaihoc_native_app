@@ -106,7 +106,7 @@ const TabStack = createMaterialBottomTabNavigator(
         },
     },
     {
-        initialRouteName: 'Profile',
+        initialRouteName: 'IntroTest',
         swipeEnabled: true,
         animationEnabled: true,
         defaultNavigationOptions: ({ navigation, screenProps }) => (

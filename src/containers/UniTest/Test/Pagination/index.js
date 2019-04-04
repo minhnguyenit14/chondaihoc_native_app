@@ -18,7 +18,7 @@ class Pagination extends Component {
     genPagination = () => {
         let { questions, pagesAnswered, pageIndex } = this.props.uniTest;
         return questions.map((d, i) => {
-            let isAnswered = pagesAnswered.filter(p => p === d.pageIndex).length;
+            let isAnswered = pagesAnswered.filter(p => p === d.pageIndex).length !== 0;
             let active = pageIndex === d.pageIndex;
             return <Page
                 key={i}

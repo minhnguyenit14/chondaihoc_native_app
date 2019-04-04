@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity, Modal } from 'react-native';
-import { ROUTES, STATUS } from '../../constants';
+import { View, TouchableOpacity, Alert } from 'react-native';
+import { STATUS } from '../../constants';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { StyleSheet } from 'react-native';
-import { AppContainer, Input } from '../../common';
+import { AppContainer } from '../../common';
 import { getStorage } from '../../helper/axiosHelper';
 import { AVATAR_PATH } from '../../../appConfig';
 import { vars, screenHeight } from '../../styles';
 import { connect } from 'react-redux';
-import { getProfile, uploadTempImage, uploadImage, updateProfile, setAvatar, resetEditForm } from '../../actions/profile';
+import {
+    getProfile,
+    uploadTempImage,
+    uploadImage,
+    updateProfile,
+    setAvatar,
+    resetEditForm
+} from '../../actions/profile';
+import { logOut } from '../../actions/logout';
 import Avatar from './Avatar';
 import Edit from './Edit';
 
@@ -16,6 +24,29 @@ const ENTITY_NAME = 'User';
 const EDIT_MODE = 'Edit';
 
 class Profile extends Component {
+    static navigationOptions = ({ navigation }) => {
+        return {
+            headerRight: (
+                <TouchableOpacity
+                    style={{ paddingHorizontal: vars.padding }}
+                    hitSlop={{
+                        top: 20,
+                        left: 20,
+                        bottom: 20,
+                        right: 20
+                    }}
+                    onPress={navigation.getParam('logout')}
+                >
+                    <Icon
+                        size={vars.fontSizeStandard * 2}
+                        name="sign-out-alt"
+                        color={vars.orange}
+                    />
+                </TouchableOpacity>
+            )
+        }
+    };
+
     constructor(props) {
         super(props);
         this.state = {
@@ -26,6 +57,9 @@ class Profile extends Component {
     }
 
     componentDidMount() {
+        this.props.navigation.setParams({
+            logout: this._logout
+        });
         this.getProfile();
     }
 
@@ -44,7 +78,9 @@ class Profile extends Component {
         } else {
             getStorage().then(
                 storage => {
-                    this.props.getProfile(storage.userID, (data) => {
+                    console.log(storage, this.props.login)
+                    let userID = storage.userID || this.props.login.userID;
+                    this.props.getProfile(userID, (data) => {
                         let {
                             userAvatar,
                             // userFullName
@@ -58,6 +94,27 @@ class Profile extends Component {
                 }
             )
         }
+    }
+
+    _logout = () => {
+        Alert.alert(
+            "Đăng xuất",
+            "Bạn có chắc chắn muốn đăng xuất?",
+            [
+                {
+                    text: 'Hủy',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Đăng xuất',
+                    onPress: () => {
+                        this.props.logOut();
+                        this.props.navigation.navigate("Loading")
+                    }
+                },
+            ],
+            { cancelable: false }
+        )
     }
 
     uploadTempImage = (image) => {
@@ -126,15 +183,18 @@ class Profile extends Component {
         return (
             <AppContainer
                 sticker={
-                    <View style={styles.sticker} />
+                    <React.Fragment>
+                        <Edit
+                            onUpdateSuccess={this.onUpdateSuccess}
+                            changePass={changePass}
+                            visible={isEdit || changePass}
+                            onRequestClose={this.closeEdit}
+                        />
+                        <View style={styles.sticker} />
+                    </React.Fragment>
                 }
             >
-                <Edit
-                    onUpdateSuccess={this.onUpdateSuccess}
-                    changePass={changePass}
-                    visible={isEdit || changePass}
-                    onRequestClose={this.closeEdit}
-                />
+
                 <View style={{ width: '100%', flex: 1 }}>
                     <Avatar
                         loading={loading}
@@ -217,7 +277,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
     return {
-        profile: state.profile
+        profile: state.profile,
+        login: state.login
     }
 }
 
@@ -240,6 +301,9 @@ const mapDispatchToProps = dispatch => {
         },
         resetEditForm: () => {
             dispatch(resetEditForm())
+        },
+        logOut: () => {
+            dispatch(logOut())
         }
     }
 }

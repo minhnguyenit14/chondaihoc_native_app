@@ -5,8 +5,10 @@ import uniSearch from './uniSearch';
 import uniTest from './uniTest';
 import blog from './blog';
 import profile from './profile';
+import types from '../actions/logout/types';
+import { removeStorage } from "../helper/axiosHelper";
 
-export default rootReducers = combineReducers({
+const appReducer = combineReducers({
     login,
     signup,
     uniSearch,
@@ -14,3 +16,12 @@ export default rootReducers = combineReducers({
     blog,
     profile
 })
+
+export default rootReducers = (state, action) => {
+    if (action.type === types.LOG_OUT) {
+        removeStorage().then(
+            state = undefined
+        );
+    }
+    return appReducer(state, action);
+};

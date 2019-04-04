@@ -9,6 +9,7 @@ const initState = {
     pageIndex: 1,
     answers: [],
     totalQuestions: 0,
+    totalAnswered: 0,
     pagesAnswered: [],
     result: [],
     kindCode: "",
@@ -22,6 +23,11 @@ const initState = {
 
 const uniTest = (state = initState, action) => {
     switch (action.type) {
+        case types.SET_TOTAL_ANSWERED:
+            return {
+                ...state,
+                totalAnswered: action.totalAnswered
+            }
         case types.SET_GET_QUESTIONS_STATUS:
             return {
                 ...state,

@@ -5,6 +5,7 @@ import {
 import {
   DotIndicator
 } from 'react-native-indicators';
+import { vars } from '../../styles';
 
 class Loading extends React.Component {
   constructor(props) {
@@ -24,6 +25,7 @@ class Loading extends React.Component {
       dot ?
         <DotIndicator
           color={color}
+          size={vars.fontSizeStandard / 2}
         />
         :
         <ActivityIndicator

@@ -22,7 +22,7 @@ import * as Animatable from 'react-native-animatable';
 
 class Test extends Component {
     static navigationOptions = ({ navigation }) => {
-        let disabled = navigation.getParam('disabled');
+        let disabled = navigation.getParam('disabled', false);
         return {
             headerTitle: ROUTES.TEST.header,
             headerRight: (
@@ -62,9 +62,9 @@ class Test extends Component {
     }
 
     componentDidMount() {
-        let { totalQuestions } = this.props.uniTest;
+        let { totalQuestions, totalAnswered } = this.props.uniTest;
         this.props.navigation.setParams({
-            disabled: (this.countAnswers() === totalQuestions && totalQuestions !== 0) ? false : true,
+            disabled: (totalAnswered === totalQuestions && totalQuestions !== 0) ? false : true,
             submit: this._submit,
             auto: this.auto
         });
@@ -156,25 +156,12 @@ class Test extends Component {
         this.scrollView.scrollToPosition(0, 0);
     }
 
-    checkDisabled = () => {
-        let { totalQuestions } = this.props.uniTest;
-        if (this.countAnswers() === totalQuestions) {
+    checkDisabled = (isDisabled) => {
+        if (isDisabled) {
             this.props.navigation.setParams({
                 disabled: false
             });
         }
-    }
-
-    countAnswers = () => {
-        let { answers } = this.props.uniTest;
-        let count = 0;
-        answers.map(a =>
-            a.data.map(d => count++));
-        return count;
-    }
-
-    onPageChange = (pageIndex) => {
-        this.props.setPageIndex(pageIndex + 1)
     }
 
     renderFlatlist = () => {
@@ -234,7 +221,7 @@ class Test extends Component {
                     loadingQ ? null :
                         <View style={[styles.status]}>
                             <ProgressBarAnimated
-                                backgroundAnimationDuration={1500}
+                                backgroundAnimationDuration={500}
                                 width={screenWidth}
                                 value={testProgress}
                                 maxValue={100}
@@ -249,31 +236,18 @@ class Test extends Component {
                 }
             >
                 {loadingQ ||
-
-                    <Animatable.View
-                        style={{ marginTop: vars.margin }}
-                        animation="bounceInDown"
-                        easing="ease-in-cubic"
-                        direction="alternate"
-                    >
-                        <FlatList
-                            data={questions}
-                            keyExtractor={q => q.QuestionID.toString()}
-                            renderItem={q =>
-                                <Animatable.View
-                                    ref={inst => this.questionAnimate = inst}
-                                    animation={q.index % 2 === 0 ? 'bounceInRight' : 'bounceInLeft'}
-                                >
-                                    <View style={{ paddingHorizontal: vars.padding }}>
-                                        <Question
-                                            onAnswer={this.checkDisabled}
-                                            data={q.item}
-                                            number={q.item.index}
-                                        />
-                                    </View>
-                                </Animatable.View>}
-                        />
-                    </Animatable.View>
+                    <FlatList
+                        data={questions}
+                        keyExtractor={q => q.QuestionID.toString()}
+                        renderItem={q =>
+                            <View style={{ paddingHorizontal: vars.padding }}>
+                                <Question
+                                    onAnswer={this.checkDisabled}
+                                    data={q.item}
+                                    number={q.item.index}
+                                />
+                            </View>}
+                    />
                 }
             </AppContainer>
         );

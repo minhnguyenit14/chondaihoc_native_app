@@ -48,17 +48,25 @@ class Avatar extends PureComponent {
                             resizeMode="cover"
                         />
                     </View>
-                    <TouchableOpacity
-                        disabled={loading && true}
-                        style={styles.btn}
-                        onPress={() => this.setState({ visible: true })}
-                    >
-                        <Icon
-                            name="camera"
-                            color={color}
-                            size={vars.fontSizeLarge}
-                        />
-                    </TouchableOpacity>
+                    <ImageUpload
+                        customSelector={
+                            <TouchableOpacity
+                                disabled={loading && true}
+                                style={styles.btn}
+                                onPress={() => this.setState({ visible: true })}
+                            >
+                                <Icon
+                                    name="camera"
+                                    color={color}
+                                    size={vars.fontSizeLarge}
+                                />
+                            </TouchableOpacity>
+                        }
+                        visible={visible}
+                        onClose={this.closeModal}
+                        onSuccess={this.onSuccessGetImage}
+                        onError={this.closeModal}
+                    />
                 </View>
                 {loading ||
                     <React.Fragment>
@@ -70,12 +78,7 @@ class Avatar extends PureComponent {
                         </Text>
                     </React.Fragment>
                 }
-                <ImageUpload
-                    visible={visible}
-                    onClose={this.closeModal}
-                    onSuccess={this.onSuccessGetImage}
-                    onError={this.closeModal}
-                />
+
             </View>
         );
     }

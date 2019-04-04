@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import LightBox from 'react-native-lightbox';
 import { Image as Img, View } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
-import { vars, ViewStyles } from '../../styles';
+import { vars, ViewStyles, screenHeight, screenWidth } from '../../styles';
 import { Caption, Loading } from '..';
 
 type ImageProps = {
@@ -22,7 +22,8 @@ class Image extends Component<ImageProps> {
         this.state = {
             error: false,
             uri: '',
-            isLoading: false
+            isLoading: false,
+            opened: false
         };
         this.fastImg = null;
     }
@@ -56,7 +57,7 @@ class Image extends Component<ImageProps> {
             resizeMode,
             loading
         } = this.props;
-        let { error, isLoading } = this.state;
+        let { error, isLoading, opened } = this.state;
         let status = error
             ? <View style={[ViewStyles.container, ViewStyles.flexCenter]}>
                 <Icon
@@ -92,7 +93,7 @@ class Image extends Component<ImageProps> {
             : (uri
                 ? <FastImage
                     ref={inst => this.fastImg = inst}
-                    style={[style]}
+                    style={[ViewStyles.container, style]}
                     source={{
                         uri,
                         priority: FastImage.priority.high,
@@ -109,13 +110,31 @@ class Image extends Component<ImageProps> {
             (lightbox && !error && !isLoading && !loading)
                 ?
                 <LightBox
-                    underlayColor={vars.white}
-                >
+                    // activeProps={
+                    //     {
+                    //         style: [{
+                    //             marginTop: 50
+                    //         },
+                    //         opened && { height: screenHeight }
+                    //         ],
+                    //     }
+                    // }
+                    didOpen={() => setTimeout(() => this.setState({ opened: true }), 250)}
+                    onClose={() => this.setState({ opened: false })}
+                    underlayColor={vars.white}>
                     <View>
                         {loadingComponent}
-                        {img}
+                        {
+                            opened
+                                ?
+                                <View style={[{ position: 'relative', marginTop: 50, height: screenHeight }]}>
+                                    {img}
+                                </View>
+                                : img
+                        }
                     </View>
                 </LightBox>
+
                 : <View>
                     {loadingComponent}
                     {img}

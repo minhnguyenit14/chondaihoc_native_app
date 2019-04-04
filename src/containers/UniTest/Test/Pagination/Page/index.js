@@ -2,29 +2,56 @@ import React, { Component } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { ViewStyles, vars, screenWidth } from '../../../../../styles';
 import { Text } from '../../../../../common';
+import * as Animatable from 'react-native-animatable';
 
 class Page extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            isActived: false
+        };
+        this.page = null
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.isAnswered && !this.state.isActived && this.page) {
+            this.page.bounce(500);
+            this.setState({
+                isActived: true
+            })
+        }
+        if (!nextProps.isAnswered && this.state.isActived) {
+            this.setState({
+                isActived: false
+            })
+        }
     }
 
 
     render() {
         let { pageNumber, active, isAnswered } = this.props;
         return (
-            <TouchableOpacity
-                style={[
-                    styles.pageNumber,
-                    isAnswered && styles.answered,
-                    active && styles.active
-                ]}
-                onPress={() => this.props.onPress(pageNumber)}
+            <Animatable.View
+                ref={inst => this.page = inst}
+                useNativeDriver
+                style={{ flexGrow: 1 }}
             >
-                <Text style={styles.text}>
-                    {pageNumber}
-                </Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    style={[
+                        styles.pageNumber,
+                        isAnswered && styles.answered,
+                        active && styles.active
+                    ]}
+                    onPress={() => this.props.onPress(pageNumber)}
+                >
+
+                    <Text style={styles.text}>
+                        {pageNumber}
+                    </Text>
+
+                </TouchableOpacity>
+            </Animatable.View>
+
         );
     }
 }

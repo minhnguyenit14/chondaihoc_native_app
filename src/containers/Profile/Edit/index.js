@@ -70,7 +70,6 @@ class Edit extends PureComponent {
             let chkPass = this.isPasswordValid(newPassword.data);
             let chkConfirmPassword = this.isConfirmPasswordValid(reNewPassword.data, newPassword.data);
             if (!chkPass.result || !chkConfirmPassword.result) {
-                console.log(chkPass, chkConfirmPassword);
                 this.onChange("setNewPassword", newPassword.data, chkPass.msg);
                 this.onChange("setReNewPassword", reNewPassword.data, chkConfirmPassword.msg);
             } else {
@@ -187,58 +186,55 @@ class Edit extends PureComponent {
             />
         </View>
         return (
-            <View style={[styles.container, ViewStyles.container, ViewStyles.flexCenter]}>
-                <Modal
-                    animationType="fade"
-                    visible={visible}
-                    onRequestClose={this.props.onRequestClose}
-                    transparent={true}
-                >
-                    <TouchableWithoutFeedback onPress={this.props.onRequestClose} >
-                        <View style={[styles.modal]}>
+            <Modal
+                animationType="fade"
+                visible={visible}
+                onRequestClose={this.props.onRequestClose}
+                transparent={true}
+            >
+                <TouchableWithoutFeedback onPress={this.props.onRequestClose}>
+                    <View style={[styles.modal]}>
+                        <Animatable.View
+                            useNativeDriver
+                            animation='bounceInUp'
+                            easing="ease-in-cubic"
+                            direction="alternate"
+                            style={[ViewStyles.container, styles.content, changePass && styles.changePass]}
+                        >
 
-                            <Animatable.View
-                                animation='bounceInUp'
-                                easing="ease-in-cubic"
-                                direction="alternate"
-                                style={[ViewStyles.container, styles.content, changePass && styles.changePass]}
+                            <KeyboardAwareScrollView
+                                contentContainerStyle={[ViewStyles.container]}
                             >
-
-                                <KeyboardAwareScrollView
-                                    contentContainerStyle={[ViewStyles.container]}
-                                >
-                                    <TouchableWithoutFeedback>
-                                        <View style={{ justifyContent: 'space-between', flex: 1 }}>
-                                            {changePass ? changePassword : edit}
-                                            <View style={[
-                                                ViewStyles.flexDirectionRow,
-                                                styles.btnGroup,
-                                                changePass ? styles.margin1 : styles.margin2
-                                            ]}>
-                                                <Button
-                                                    disabled={disabled || loading}
-                                                    loading={loading}
-                                                    style={styles.btn}
-                                                    buttonStyle={styles.btn}
-                                                    onPress={() => this.onSubmit(changePass, currentPassword, newPassword, reNewPassword)}
-                                                    title="Chỉnh sửa"
-                                                />
-                                                <Button
-                                                    secondary
-                                                    buttonStyle={styles.btn}
-                                                    style={styles.btn}
-                                                    title="Hủy"
-                                                    onPress={this.props.onRequestClose}
-                                                />
-                                            </View>
+                                <TouchableWithoutFeedback>
+                                    <View style={[{ justifyContent: 'space-between' }, changePass ? { flex: .4 } : { flex: .25 }]}>
+                                        {changePass ? changePassword : edit}
+                                        <View style={[
+                                            ViewStyles.flexDirectionRow,
+                                            styles.btnGroup,
+                                        ]}>
+                                            <Button
+                                                disabled={disabled || loading}
+                                                loading={loading}
+                                                style={styles.btn}
+                                                buttonStyle={styles.btn}
+                                                onPress={() => this.onSubmit(changePass, currentPassword, newPassword, reNewPassword)}
+                                                title="Chỉnh sửa"
+                                            />
+                                            <Button
+                                                secondary
+                                                buttonStyle={styles.btn}
+                                                style={styles.btn}
+                                                title="Hủy"
+                                                onPress={this.props.onRequestClose}
+                                            />
                                         </View>
-                                    </TouchableWithoutFeedback>
-                                </KeyboardAwareScrollView>
-                            </Animatable.View>
-                        </View>
-                    </TouchableWithoutFeedback>
-                </Modal>
-            </View>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                            </KeyboardAwareScrollView>
+                        </Animatable.View>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
         );
     }
 }
@@ -247,26 +243,19 @@ const styles = StyleSheet.create({
     container: {
         position: 'absolute'
     },
-    wrapper: {
-        backgroundColor: 'black',
-        justifyContent: 'space-between',
-        flex: 1
-    },
     modal: {
-        flex: 1,
+        margin: 0, // This is the important style you need to set
+        alignItems: undefined,
+        justifyContent: undefined,
         backgroundColor: 'rgba(0,0,0,.6)'
     },
     btn: {
-        height: '100%',
         maxWidth: screenWidth * .4
     },
     content: {
-        flex: 1,
         marginTop: screenHeight * .55,
-        borderWidth: 2,
         borderTopLeftRadius: vars.padding,
         borderTopRightRadius: vars.padding,
-        borderColor: vars.borderColor,
         paddingVertical: vars.padding,
         backgroundColor: vars.white,
         paddingHorizontal: vars.padding
@@ -275,20 +264,14 @@ const styles = StyleSheet.create({
         marginTop: screenHeight * .4,
     },
     btnGroup: {
-        marginTop: vars.margin,
-        alignItems: 'center',
+        marginBottom: vars.margin,
+        alignItems: 'flex-end',
         justifyContent: 'space-between',
         flex: 1,
     },
     formError: {
         marginVertical: vars.margin,
         color: vars.red,
-    },
-    margin1: {
-        marginTop: vars.margin
-    },
-    margin2: {
-        marginTop: vars.margin / 2
     }
 })
 

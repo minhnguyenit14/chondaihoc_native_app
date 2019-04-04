@@ -107,6 +107,11 @@ export const getResult = (data, userID, questionKind, questionSetID, callBackSuc
     }
 }
 
+export const setTotalAnswered = (totalAnswered) => ({
+    type: types.SET_TOTAL_ANSWERED,
+    totalAnswered
+})
+
 export const setGetQuestionsStatus = (status) => ({
     type: types.SET_GET_QUESTIONS_STATUS,
     status

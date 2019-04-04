@@ -10,7 +10,7 @@ const initState = {
     userFullName: "",
     userID: "",
     userEmail: { data: "abc@abc.com", error: "" },
-    userPassword: { data: "111", error: "" },
+    userPassword: { data: "111111", error: "" },
     loginStatus: STATUS.default,
     loginError: "",
     formError: ""

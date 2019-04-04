@@ -1,6 +1,7 @@
 import { API, STATUS } from '../../constants';
 import { post } from '../../helper/axiosHelper';
 import types from './types';
+import { logOut } from '../logout';
 
 export const loginAct = (userEmail, userPassword, callBackSuccess) => {
     return dispatch => {
@@ -19,7 +20,7 @@ export const loginAct = (userEmail, userPassword, callBackSuccess) => {
                 } else {
                     let data = JSON.parse(res.data.ResultData);
                     console.log(data);
-                    dispatch(clearLogIn());
+                    dispatch(logOut());
                     dispatch(setLoginStatus(STATUS.success))
                     dispatch(setUser(
                         data.UserID,

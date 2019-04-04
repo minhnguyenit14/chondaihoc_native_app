@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ImagePicker from 'react-native-image-crop-picker';
 import ModalSelector from 'react-native-modal-selector';
-import { screenHeight } from '../../styles';
+import { screenHeight, vars } from '../../styles';
 
 type ImageUploadProps = {
     visible?: Boolean,
@@ -56,20 +56,23 @@ class ImageUpload extends Component<ImageUploadProps> {
     }
 
     render() {
-        let { visible } = this.props;
+        let { visible, customSelector } = this.props;
         const data = [
             { key: 0, label: 'Mở Camera' },
             { key: 1, label: 'Mở trong thư viện' },
         ];
         return (
             <ModalSelector
+                customSelector={customSelector}
+                animationType="fade"
                 visible={visible}
-                style={{ opacity: 0 }}
+                cancelTextStyle={{ color: vars.red }}
+                backdropPressToClose
                 data={data}
-                overlayStyle={{ height: screenHeight }}
                 cancelText={"Hủy"}
                 onChange={this.cameraPicker}
                 onModalClose={this.props.onClose}
+                overlayStyle={{height: screenHeight, width: '100%', position: 'absolute'}}
             />
         );
     }

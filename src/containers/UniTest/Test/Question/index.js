@@ -3,50 +3,60 @@ import { View, StyleSheet } from 'react-native';
 import { ViewStyles, vars } from '../../../../styles';
 import { Text, Caption } from '../../../../common';
 import { Slider } from 'react-native-elements';
-import { setAnswers, setPagesAnswered, setTestProgress } from '../../../../actions/uniTest';
+import { setAnswers, setPagesAnswered, setTestProgress, setTotalAnswered } from '../../../../actions/uniTest';
 import { connect } from 'react-redux';
+import * as Animatable from 'react-native-animatable';
+import { STATUS } from '../../../../constants';
+
 
 class Question extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            value: null
+        };
     }
 
     onChange = (value) => {
-        let { data } = this.props;
-        let { answers, options, pageIndex } = this.props.uniTest;
-        let isExisted = false;
+        this.setState({
+            value
+        })
+    }
 
+    updateData = () => {
+        let { value } = this.state;
+        let { data } = this.props;
+        let { answers, options, pageIndex, totalAnswered, totalQuestions } = this.props.uniTest;
+        let isExisted = false;
+        let tempTotal = totalAnswered;
         let selectedOpt = options.filter(o => o.OptionPoint === value);
+
         answers[pageIndex - 1].data.forEach(a => {
             if (a.QuestionID === data.QuestionID) {
                 a.value = value;
                 isExisted = true;
             }
         });
-
-        isExisted || answers[pageIndex - 1].data.push({
+        isExisted || (totalAnswered++ , answers[pageIndex - 1].data.push({
             QuestionID: data.QuestionID,
             QuestionSetID: data.QuestionSetID,
             CharacterKindID: data.CharacterKindID,
             OptionID: selectedOpt[0].OptionID,
             value
-        })
+        }))
+
+        if (tempTotal !== totalAnswered) {
+            this.setProgress(totalAnswered);
+        }
         this.props.setAnswers(answers);
-        
         this.setPagesAnswered();
-        this.props.onAnswer();
+        this.props.onAnswer(totalAnswered === totalQuestions && totalQuestions !== 0);
     }
 
-    checkProgress = (answers = null) => {
+    setProgress = (totalAnswered) => {
         let { totalQuestions } = this.props.uniTest;
-        if (!answers) {
-            answers = this.props.uniTest.answers;
-        }
-        let count = 0;
-        answers.map(a =>
-            a.data.map(d => count++));
-        return ((isNaN(totalQuestions) || Math.round(count / totalQuestions * 100)) || 0)
+        this.props.setTotalAnswered(totalAnswered);
+        this.props.setTestProgress(Math.round(totalAnswered / totalQuestions * 100));
     }
 
     setPagesAnswered = () => {
@@ -84,22 +94,37 @@ class Question extends Component {
             data,
             number
         } = this.props;
-        let { answers, options, pageIndex } = this.props.uniTest;
+        let { answers, options, pageIndex, getResultStatus } = this.props.uniTest;
+        let disabled = getResultStatus === STATUS.loading;
         let ansInfo = this.getAnsInfo(answers[pageIndex - 1].data, data.QuestionID);
         let isAnswered = ansInfo[0];
-        let value = ansInfo[1];
+        let value = this.state.value || ansInfo[1];
         let step = 1;
         const min = options[0].OptionPoint;
         const max = options[options.length - 1].OptionPoint;
         value = value || max / 2;
         return (
-            <View style={[
-                ViewStyles.flexCenterVertical,
-                ViewStyles.flexDirectionRow,
-                styles.container
-            ]}>
+            <Animatable.View
+                useNativeDriver
+                duration={800}
+                direction="normal"
+                animation="bounceInUp"
+                easing="ease-in-cubic"
+                style={[
+                    ViewStyles.flexCenterVertical,
+                    ViewStyles.flexDirectionRow,
+                    styles.container
+                ]}
+            >
                 <View style={[ViewStyles.flexCenter, styles.number]}>
-                    <Text style={[styles.numberText, isAnswered && styles.answered]}>
+                    <Text
+                        style={[
+                            styles.numberText,
+                            disabled
+                                ? styles.disabled
+                                : (isAnswered && styles.answered)
+                        ]}
+                    >
                         {number}
                     </Text>
                     <View style={[ViewStyles.flexDirectionRow, { marginTop: 5 }]}>
@@ -117,6 +142,7 @@ class Question extends Component {
                         {data.QuestionTitle}
                     </Text>
                     <Slider
+                        disabled={disabled}
                         value={value}
                         maximumValue={max}
                         minimumValue={min}
@@ -126,11 +152,20 @@ class Question extends Component {
                         minimumTrackTintColor={vars.textBase}
                         thumbStyle={{ width: vars.padding, height: vars.padding }}
                         onValueChange={this.onChange}
-                        onSlidingComplete={() => this.props.setTestProgress(this.checkProgress())}
-                        thumbTintColor={isAnswered ? vars.logo : vars.borderColorDarker}
+                        onSlidingComplete={() => {
+                            this.updateData();
+                        }}
+                        thumbTintColor={
+                            disabled
+                                ? vars.textSecondary
+                                : (isAnswered
+                                    ? vars.logo
+                                    : vars.borderColorDarker
+                                )
+                        }
                     />
                 </View>
-            </View>
+            </Animatable.View>
         );
     }
 }
@@ -172,6 +207,10 @@ const styles = StyleSheet.create({
     answered: {
         backgroundColor: vars.red,
     },
+    disabled: {
+        backgroundColor: vars.textSecondary,
+
+    },
     question: {
         width: '85%',
         flexWrap: 'wrap',
@@ -194,6 +233,9 @@ const mapDispatchToProps = dispatch => {
         },
         setTestProgress: (testProgress) => {
             dispatch(setTestProgress(testProgress))
+        },
+        setTotalAnswered: (totalAnswered) => {
+            dispatch(setTotalAnswered(totalAnswered))
         }
     }
 }

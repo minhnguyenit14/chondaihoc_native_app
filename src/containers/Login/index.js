@@ -24,7 +24,7 @@ class Login extends Component {
     login = () => {
         let { userEmail, userPassword } = this.props.login;
         this.props.loginAct(userEmail, userPassword, (data) => {
-            this.props.navigation.navigate('App', { data });
+            this.props.navigation.navigate('App');
         })
     }
 
