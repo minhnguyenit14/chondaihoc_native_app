@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { ViewStyles, vars } from '../../../../styles';
 import { Text, Caption } from '../../../../common';
 import { Slider } from 'react-native-elements';
-import { setAnswers, setPagesAnswered } from '../../../../actions/uniTest';
+import { setAnswers, setPagesAnswered, setTestProgress } from '../../../../actions/uniTest';
 import { connect } from 'react-redux';
 
 class Question extends Component {
@@ -14,19 +14,18 @@ class Question extends Component {
 
     onChange = (value) => {
         let { data } = this.props;
-        let { answers, options } = this.props.uniTest;
+        let { answers, options, pageIndex } = this.props.uniTest;
         let isExisted = false;
 
         let selectedOpt = options.filter(o => o.OptionPoint === value);
-        answers.forEach(a => {
+        answers[pageIndex - 1].data.forEach(a => {
             if (a.QuestionID === data.QuestionID) {
-                a.OptionID = selectedOpt[0].OptionID;
                 a.value = value;
                 isExisted = true;
             }
         });
 
-        isExisted || answers.push({
+        isExisted || answers[pageIndex - 1].data.push({
             QuestionID: data.QuestionID,
             QuestionSetID: data.QuestionSetID,
             CharacterKindID: data.CharacterKindID,
@@ -34,8 +33,20 @@ class Question extends Component {
             value
         })
         this.props.setAnswers(answers);
+        
         this.setPagesAnswered();
         this.props.onAnswer();
+    }
+
+    checkProgress = (answers = null) => {
+        let { totalQuestions } = this.props.uniTest;
+        if (!answers) {
+            answers = this.props.uniTest.answers;
+        }
+        let count = 0;
+        answers.map(a =>
+            a.data.map(d => count++));
+        return ((isNaN(totalQuestions) || Math.round(count / totalQuestions * 100)) || 0)
     }
 
     setPagesAnswered = () => {
@@ -46,15 +57,8 @@ class Question extends Component {
             pagesAnswered
         } = this.props.uniTest;
         questions = questions.length !== 0 ? questions.filter(q => q.pageIndex === pageIndex)[0].data : questions;
-        let count = 0;
-        answers.map(q => {
-            questions.map(a => {
-                if (q.QuestionID === a.QuestionID) {
-                    count++;
-                }
-            })
-        })
-        let isFullAnswered = count === questions.length;
+
+        let isFullAnswered = answers[pageIndex - 1].data.length === questions.length;
         if (isFullAnswered) {
             pagesAnswered.includes(pageIndex) || pagesAnswered.push(pageIndex)
         } else {
@@ -80,13 +84,13 @@ class Question extends Component {
             data,
             number
         } = this.props;
-        let { answers, options } = this.props.uniTest;
-        let ansInfo = this.getAnsInfo(answers, data.QuestionID);
+        let { answers, options, pageIndex } = this.props.uniTest;
+        let ansInfo = this.getAnsInfo(answers[pageIndex - 1].data, data.QuestionID);
         let isAnswered = ansInfo[0];
         let value = ansInfo[1];
         let step = 1;
-        let min = options[0].OptionPoint;
-        let max = options[options.length - 1].OptionPoint;
+        const min = options[0].OptionPoint;
+        const max = options[options.length - 1].OptionPoint;
         value = value || max / 2;
         return (
             <View style={[
@@ -122,6 +126,7 @@ class Question extends Component {
                         minimumTrackTintColor={vars.textBase}
                         thumbStyle={{ width: vars.padding, height: vars.padding }}
                         onValueChange={this.onChange}
+                        onSlidingComplete={() => this.props.setTestProgress(this.checkProgress())}
                         thumbTintColor={isAnswered ? vars.logo : vars.borderColorDarker}
                     />
                 </View>
@@ -186,6 +191,9 @@ const mapDispatchToProps = dispatch => {
         },
         setPagesAnswered: (pagesAnswered) => {
             dispatch(setPagesAnswered(pagesAnswered))
+        },
+        setTestProgress: (testProgress) => {
+            dispatch(setTestProgress(testProgress))
         }
     }
 }

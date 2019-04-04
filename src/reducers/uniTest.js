@@ -12,9 +12,10 @@ const initState = {
     pagesAnswered: [],
     result: [],
     kindCode: "",
-    msg: "",
+    testMsg: "",
     questionKind: "",
     questionSetID: "",
+    testProgress: 0,
     getQuestionsStatus: STATUS.default,
     getResultStatus: STATUS.default
 }
@@ -95,6 +96,15 @@ const uniTest = (state = initState, action) => {
             return {
                 ...state,
                 questionSetID: action.questionSetID
+            }
+        case types.RESET:
+            return {
+                ...initState
+            }
+        case types.SET_TEST_PROGRESS:
+            return {
+                ...state,
+                testProgress: action.testProgress
             }
         default:
             return state

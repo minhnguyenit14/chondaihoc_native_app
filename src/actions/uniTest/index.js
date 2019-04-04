@@ -2,17 +2,22 @@ import types from './types';
 import { API, STATUS } from '../../constants';
 import { post } from '../../helper/axiosHelper';
 
-const pagination = (questions, pageSize) => {
-    let data = [];
+const pagination = (quesList, pageSize) => {
+    let questions = [];
+    let answers = [];
     let pIndex = 1;
     let temp = [];
-    questions.forEach((q, i) => {
+    quesList.forEach((q, i) => {
         q["index"] = i + 1;
+
         if ((i + 1) >= pIndex && (i + 1) <= pageSize * pIndex) {
             temp.push(q)
         }
         if ((i + 1) === pIndex * pageSize) {
-            data.push({
+            answers.push({
+                data: []
+            });
+            questions.push({
                 pageIndex: pIndex,
                 data: temp
             });
@@ -20,16 +25,16 @@ const pagination = (questions, pageSize) => {
             pIndex++;
         }
     })
-    return data;
+    return { questions, answers };
 }
 
 const getFilterData = (data) => {
-    data = data.slice(0, data.length);
-    let temp = data.shift();
-    data.splice(1, 0, temp);
     let kindCode = "";
-    data.map(d => {
+    data.map((d, i) => {
         kindCode += d.CharacterKindName.charAt(0);
+        if (i < data.length - 1) {
+            kindCode = `${kindCode}.`;
+        }
     })
     return { kindCode, data };
 }
@@ -51,8 +56,11 @@ export const getQuestions = (userID = -1) => {
                     let pageSize = resultData.PageSize;
                     dispatch(setTotalQuestions(questions.length));
                     dispatch(setQuestionsOrigin(questions));
-                    questions = pagination(questions, pageSize);
+                    let temp = pagination(questions, pageSize);
+                    questions = temp.questions;
+                    let answers = temp.answers;
                     dispatch(setQuestions(questions));
+                    dispatch(setAnswers(answers));
                     dispatch(setQuestionKind(resultData.QuestionKind));
                     dispatch(setQuestionSetID(resultData.QuestionSetID));
                     dispatch(setOptions(options));
@@ -84,9 +92,9 @@ export const getResult = (data, userID, questionKind, questionSetID, callBackSuc
                     dispatch(setGetResultStatus(STATUS.error))
                 } else {
                     let resultData = res.data.ResultData;
-                    let { kindCode, data } = getFilterData(resultData.Result);
+                    let { kindCode, data } = getFilterData(resultData.CharacterKind);
                     dispatch(setResult(data));
-                    dispatch(setMsg(resultData.TestMsg));
+                    dispatch(setTestMsg(resultData.TestMsg));
                     dispatch(setKindCode(kindCode));
                     dispatch(setGetResultStatus(STATUS.success));
                     callBackSuccess()
@@ -139,6 +147,11 @@ export const setAnswers = (answers) => ({
     answers
 })
 
+export const setTestProgress = (testProgress) => ({
+    type: types.SET_TEST_PROGRESS,
+    testProgress
+})
+
 export const setTotalQuestions = (totalQuestions) => ({
     type: types.SET_TOTAL_QUESTIONS,
     totalQuestions
@@ -159,7 +172,7 @@ export const setKindCode = (kindCode) => ({
     kindCode
 })
 
-export const setMsg = (testMsg) => ({
+export const setTestMsg = (testMsg) => ({
     type: types.SET_TEST_MSG,
     testMsg
 })
@@ -172,4 +185,8 @@ export const setQuestionKind = (questionKind = "Free") => ({
 export const setQuestionSetID = (questionSetID = "") => ({
     type: types.SET_QUESTION_SET_ID,
     questionSetID
+})
+
+export const reset = () => ({
+    type: types.RESET
 })

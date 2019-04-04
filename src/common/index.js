@@ -11,6 +11,7 @@ import Image from './Image';
 import DatePicker from './DatePicker';
 import DismissKeyboard from './DismissKeyboard';
 import RefreshControl from './RefreshControl';
+import ImageUpload from './ImageUpload';
 
 export {
    AppContainer,
@@ -25,5 +26,6 @@ export {
    Image,
    DismissKeyboard,
    DatePicker,
-   RefreshControl
+   RefreshControl,
+   ImageUpload
 }

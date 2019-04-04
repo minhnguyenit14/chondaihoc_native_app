@@ -6,6 +6,7 @@ import {
     View
 } from 'react-native';
 import { ViewStyles } from '../../../styles';
+import ImagePicker from 'react-native-image-crop-picker';
 
 class CheckAuthScreen extends React.Component {
     constructor(props) {
@@ -18,7 +19,11 @@ class CheckAuthScreen extends React.Component {
     }
 
     _bootstrapAsync = async () => {
-        removeStorage();
+        // removeStorage();
+        ImagePicker.clean().then(() => {
+        }).catch(e => {
+            alert(e);
+        });
         getStorage().then(
             storage => {
                 const userToken = storage.userToken;
@@ -33,7 +38,7 @@ class CheckAuthScreen extends React.Component {
                 ViewStyles.container,
                 ViewStyles.flexCenter
             ]}>
-                <Loading size="large"/>
+                <Loading size="large" />
             </View>
         );
     }

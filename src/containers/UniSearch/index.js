@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { AppContainer, Text, Heading, Button } from '../../common';
-import { View, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
+import { View, TouchableOpacity, FlatList, RefreshControl, ScrollView } from 'react-native';
 import { Icon } from 'react-native-elements';
 import SearchDrawer from './SearchDrawer';
 import { vars, ViewStyles } from '../../styles';
@@ -16,6 +16,8 @@ import {
     setPointTo
 } from '../../actions/uniSearch';
 import { STATUS, ROUTES } from '../../constants';
+import * as Animatable from 'react-native-animatable';
+import { UNIVERSITY_LOGO_PATH } from '../../../appConfig';
 
 const PAGE_SIZE = 5;
 class UniSearch extends PureComponent {
@@ -175,6 +177,7 @@ class UniSearch extends PureComponent {
             pointTo.data,
             city.data.id,
             (data) => {
+                data.forEach(d => d.UniversityLogo = UNIVERSITY_LOGO_PATH.replace('name', d.UniversityLogo))
                 isSearch ?
                     this.props.setUniversities(data) :
                     this.props.setUniversities(universities.concat(data));
@@ -224,45 +227,38 @@ class UniSearch extends PureComponent {
         this._search(pageIndex + 1);
     }
 
-    renderUniRow = () => {
-        let { universities } = this.props.uniSearch;
-        let unis = universities.map(d => (
-            <UniRow
-                key={d.UniversityID}
-                data={d}
-            />
-        ))
-        return unis.length !== 0 ? unis : null
-    }
-
     render() {
         let { isSearch } = this.state;
         let { searchUniversityStatus, totalUniversities, universities } = this.props.uniSearch;
         let loading = searchUniversityStatus === STATUS.loading;
         btnShowMore = (loading && isSearch) || (universities.length < totalUniversities &&
             <Button
+                style={{ marginVertical: vars.margin }}
                 danger
                 title="Xem thêm"
                 onPress={this.showMore}
                 loading={loading}
+                disabled={loading}
             />
         )
         return (
             <AppContainer
-                refresher={<RefreshControl
-                    onRefresh={() => this._search("", "", true)}
-                    refreshing={loading && isSearch}
-                    colors={[vars.orange]}
-                />}
+                scroll={false}
                 showDrawer
                 drawerDataInside={<SearchDrawer />}
                 drawer={(drawer) => this.drawer = drawer}
                 onDrawerOpen={this.openDrawer}
                 onDrawerClose={this.closeDrawer}
             >
-                <View style={{ flex: 1, width: '100%' }}>
-                    {<FlatList
-
+                <ScrollView
+                    refreshControl={<RefreshControl
+                        onRefresh={() => this._search("", "", true)}
+                        refreshing={loading && isSearch}
+                        colors={[vars.orange]}
+                    />}
+                    style={{ width: '100%', flexGrow: 1, marginTop: vars.margin }}
+                >
+                    <FlatList
                         ListEmptyComponent={!loading &&
                             <View style={ViewStyles.flexCenterHorrizontal}>
                                 <Text>
@@ -272,12 +268,20 @@ class UniSearch extends PureComponent {
                         }
                         data={universities}
                         keyExtractor={d => d.UniversityID + ""}
-                        renderItem={(d) => <UniRow
-                            data={d.item}
-                        />}
-                    />}
-                </View>
-                {btnShowMore}
+                        renderItem={(d) => <Animatable.View
+                            animation="fadeIn"
+                            easing="ease-in-cubic"
+                            direction="alternate"
+                        >
+                            <UniRow
+                                navigation={this.props.navigation}
+                                data={d.item}
+                            />
+                        </Animatable.View>
+                        }
+                    />
+                    {btnShowMore}
+                </ScrollView>
             </AppContainer>
         );
     }

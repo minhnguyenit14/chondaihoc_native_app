@@ -5,27 +5,48 @@ import {
 import qs from 'qs';
 import { AsyncStorage, Alert } from 'react-native';
 
-export const post = (url, body = {}) => {
-    return addToken(body).then(
-        (bd) => {
-            console.log(bd, url);
-            return axios(url, {
+export const post = (url, body = {}, image = false) => {
+    if (image) {
+        console.log(url, body)
+        return axios(url,
+            {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json',
                     "Content-type": "application/x-www-form-urlencoded",
                 },
                 timeout: 15000,
-                data: qs.stringify(bd)
-            }).then(
-                res => {
-                    return handleRespond(res);
-                }
-            ).catch(err => {
-                return handleRej(err)
-            })
-        }
-    )
+                data: body
+            }
+        ).then(
+            res => {
+                return handleRespond(res);
+            }
+        ).catch(err => {
+            return handleRej(err)
+        })
+    } else {
+        return addToken(body).then(
+            (bd) => {
+                console.log(bd, url);
+                return axios(url, {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        "Content-type": "application/x-www-form-urlencoded",
+                    },
+                    timeout: 15000,
+                    data: qs.stringify(bd)
+                }).then(
+                    res => {
+                        return handleRespond(res);
+                    }
+                ).catch(err => {
+                    return handleRej(err)
+                })
+            }
+        )
+    }
 }
 
 const handleRespond = (res, isImg = false) => {
@@ -71,6 +92,7 @@ const handleRej = (err) => {
     return new Promise((resolve, reject) => {
         let isTimeOut = err.message.includes("timeout of");
         let message = isTimeOut ? "Kết nối mất quá nhiều thời gian để phản hồi" : err.message;
+        console.log(err)
         Alert.alert(
             "Lỗi",
             message,

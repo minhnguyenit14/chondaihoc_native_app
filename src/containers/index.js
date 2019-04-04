@@ -3,7 +3,11 @@ import SignUp from './SignUp';
 import Profile from './Profile';
 import UniSearch from './UniSearch';
 import Blog from './Blog';
-import {IntroTest, Test} from './UniTest';
+import {
+    IntroTest,
+    Test,
+    TestResult
+} from './UniTest';
 
 export {
     Login,
@@ -12,5 +16,6 @@ export {
     SignUp,
     Blog,
     IntroTest,
-    Test
+    Test,
+    TestResult
 }

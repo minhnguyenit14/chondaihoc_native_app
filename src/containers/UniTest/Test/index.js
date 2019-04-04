@@ -8,10 +8,17 @@ import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import Pagination from './Pagination';
 import { getStorage } from '../../../helper/axiosHelper';
 import { connect } from 'react-redux';
-import { setPageIndex, getResult, setAnswers, setPagesAnswered, getQuestions } from '../../../actions/uniTest';
+import {
+    setPageIndex,
+    getResult,
+    setAnswers,
+    setPagesAnswered,
+    getQuestions,
+    reset,
+    setTestProgress
+} from '../../../actions/uniTest';
 import Question from './Question';
 import * as Animatable from 'react-native-animatable';
-import Swiper from 'react-native-swiper';
 
 class Test extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -30,7 +37,7 @@ class Test extends Component {
                         }}
                         onPress={navigation.getParam('auto')}
                     >
-                        <Icon name="cogs" type="font-awesome" color={vars.orange} />
+                        <Icon name="cog" type="font-awesome" color={vars.orange} />
                     </TouchableOpacity>
                     <TouchableOpacity
                         disabled={disabled}
@@ -55,12 +62,21 @@ class Test extends Component {
     }
 
     componentDidMount() {
+        let { totalQuestions } = this.props.uniTest;
         this.props.navigation.setParams({
-            disabled: true,
+            disabled: (this.countAnswers() === totalQuestions && totalQuestions !== 0) ? false : true,
             submit: this._submit,
             auto: this.auto
         });
+
         this.getData();
+    }
+
+    componentWillUnmount() {
+        let { result } = this.props.uniTest;
+        if (result.length !== 0) {
+            this.props.reset();
+        }
     }
 
     getData = () => {
@@ -81,25 +97,29 @@ class Test extends Component {
         let maxValue = options[options.length - 1].OptionPoint;
         let minID = options[0].OptionID;
         let maxID = options[options.length - 1].OptionID;
+        let temp = [];
+
         questions.map(q => {
+            let autoTemp = [];
+            temp.push(q.pageIndex);
             q.data.map(d => {
                 let min = d.index >= totalQuestions / 2 ? maxValue / 2 : minValue;
                 let max = d.index < totalQuestions / 2 ? maxValue / 2 : maxValue;
-                auto.push({
+                autoTemp.push({
                     QuestionID: d.QuestionID,
                     CharacterKindID: d.CharacterKindID,
                     OptionID: Math.floor(Math.random() * (maxID - minID + 1) + minID),
                     value: Math.floor(Math.random() * (max - min + 1) + min)
                 })
             })
+            auto.push({ data: autoTemp });
         })
         this.props.setAnswers(auto);
-        let temp = [];
-        questions.map(q => temp.push(q.pageIndex));
+        this.props.setTestProgress(100);
         this.props.setPagesAnswered(temp);
         this.props.navigation.setParams({
-            disabled: true
-        }); this.setState({})
+            disabled: false
+        });
     }
 
     _submit = () => {
@@ -114,8 +134,10 @@ class Test extends Component {
                         userID = storage.userID;
                     }
                 };
+                let temp = [];
+                answers.map(a => temp = temp.concat(a.data));
                 this.props.getResult(
-                    answers,
+                    temp,
                     userID,
                     questionKind,
                     questionSetID,
@@ -123,24 +145,32 @@ class Test extends Component {
                         this.props.navigation.setParams({
                             disabled: false
                         });
+                        this.props.navigation.push(ROUTES.TEST_RESULT.route);
                     }
                 )
             }
         );
     }
 
-    makeAnimate = (current, next) => {
-        this.swiper.scrollBy(next - current);
-        this.questionAnimate.bounce(500).then(() => this.scrollView.scrollToPosition(0, 0));
+    makeAnimate = () => {
+        this.scrollView.scrollToPosition(0, 0);
     }
 
     checkDisabled = () => {
-        let { answers, totalQuestions } = this.props.uniTest;
-        if (answers.length === totalQuestions) {
+        let { totalQuestions } = this.props.uniTest;
+        if (this.countAnswers() === totalQuestions) {
             this.props.navigation.setParams({
                 disabled: false
             });
         }
+    }
+
+    countAnswers = () => {
+        let { answers } = this.props.uniTest;
+        let count = 0;
+        answers.map(a =>
+            a.data.map(d => count++));
+        return count;
     }
 
     onPageChange = (pageIndex) => {
@@ -162,18 +192,13 @@ class Test extends Component {
                         data={q.data}
                         keyExtractor={q => q.QuestionID.toString()}
                         renderItem={q =>
-                            <Animatable.View
-                                ref={inst => this.questionAnimate = inst}
-                                animation={q.index % 2 === 0 ? 'bounceInRight' : 'bounceInLeft'}
-                            >
-                                <View style={{ paddingHorizontal: vars.padding }}>
-                                    <Question
-                                        onAnswer={this.checkDisabled}
-                                        data={q.item}
-                                        number={q.item.index}
-                                    />
-                                </View>
-                            </Animatable.View>
+                            <View style={{ paddingHorizontal: vars.padding }}>
+                                <Question
+                                    onAnswer={this.checkDisabled}
+                                    data={q.item}
+                                    number={q.item.index}
+                                />
+                            </View>
                         }
                     />
                 </Animatable.View>
@@ -186,13 +211,11 @@ class Test extends Component {
         let {
             questions,
             pageIndex,
-            answers,
-            totalQuestions,
+            testProgress,
             getResultStatus,
             getQuestionsStatus
         } = this.props.uniTest;
         questions = questions.length !== 0 ? questions.filter(q => q.pageIndex === pageIndex)[0].data : questions;
-        let progress = (isNaN(totalQuestions) || Math.round(answers.length / totalQuestions * 100)) || 0;
         let loadingR = getResultStatus === STATUS.loading;
         let loadingQ = getQuestionsStatus === STATUS.loading;
 
@@ -213,52 +236,44 @@ class Test extends Component {
                             <ProgressBarAnimated
                                 backgroundAnimationDuration={1500}
                                 width={screenWidth}
-                                value={progress}
+                                value={testProgress}
                                 maxValue={100}
                                 barEasing='bounce'
                                 backgroundColor={vars.orange}
                                 backgroundColorOnComplete={vars.green}
                             />
                             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                <Pagination onPageChange={(current, next) => this.makeAnimate(current, next)} />
+                                <Pagination onPageChange={this.makeAnimate} />
                             </View>
                         </View>
                 }
             >
                 {loadingQ ||
 
-                    <Swiper
-                        ref={inst => this.swiper = inst}
-                        showsPagination={false}
-                        onIndexChanged={this.onPageChange}
+                    <Animatable.View
+                        style={{ marginTop: vars.margin }}
+                        animation="bounceInDown"
+                        easing="ease-in-cubic"
+                        direction="alternate"
                     >
-
-                        {this.renderFlatlist()}
-                    </Swiper>
-
-                    // <Animatable.View
-                    //     animation="bounceInDown"
-                    //     easing="ease-in-cubic"
-                    //     direction="alternate"
-                    // >
-                    //     <FlatList
-                    //         data={questions}
-                    //         keyExtractor={q => q.QuestionID.toString()}
-                    //         renderItem={q =>
-                    //             <Animatable.View
-                    //                 ref={inst => this.questionAnimate = inst}
-                    //                 animation={q.index % 2 === 0 ? 'bounceInRight' : 'bounceInLeft'}
-                    //             >
-                    //                 <View style={{ paddingHorizontal: vars.padding }}>
-                    //                     <Question
-                    //                         onAnswer={this.checkDisabled}
-                    //                         data={q.item}
-                    //                         number={q.item.index}
-                    //                     />
-                    //                 </View>
-                    //             </Animatable.View>}
-                    //     />
-                    // </Animatable.View>
+                        <FlatList
+                            data={questions}
+                            keyExtractor={q => q.QuestionID.toString()}
+                            renderItem={q =>
+                                <Animatable.View
+                                    ref={inst => this.questionAnimate = inst}
+                                    animation={q.index % 2 === 0 ? 'bounceInRight' : 'bounceInLeft'}
+                                >
+                                    <View style={{ paddingHorizontal: vars.padding }}>
+                                        <Question
+                                            onAnswer={this.checkDisabled}
+                                            data={q.item}
+                                            number={q.item.index}
+                                        />
+                                    </View>
+                                </Animatable.View>}
+                        />
+                    </Animatable.View>
                 }
             </AppContainer>
         );
@@ -299,6 +314,10 @@ const mapDispatchToProps = dispatch => {
         setPageIndex: (pageIndex) => {
             dispatch(setPageIndex(pageIndex))
         },
+        reset: () => dispatch(reset()),
+        setTestProgress: (testProgress) => {
+            dispatch(setTestProgress(testProgress))
+        }
     }
 }
 

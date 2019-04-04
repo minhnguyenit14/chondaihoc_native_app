@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, Caption, DismissKeyboard } from '../../common';
-import { View, StyleSheet, TextInput} from 'react-native';
+import { View, StyleSheet, TextInput, Keyboard} from 'react-native';
 import PropTypes from 'prop-types';
 import { InputStyles, vars, ViewStyles } from '../../styles';
 import {
@@ -91,17 +91,20 @@ class Input extends Component {
                             }}
                             onDateChange={this.onChange}
                         />
-                        : <DismissKeyboard>
+                        : 
+                        // <DismissKeyboard>
                             <TextInput
                                 editable={!loading}
                                 placeholder={placeholder}
                                 onChangeText={this.onChange}
                                 secureTextEntry={password}
                                 value={value}
+                                onBlur={Keyboard.dismiss}
                                 style={[ViewStyles.flexDirectionRow, InputStyles.inputStyle]}
                                 {...rest}
                             />
-                        </DismissKeyboard>}
+                        /* </DismissKeyboard> */
+                    }
                 {
                     error !== "" && <Caption style={styles.error}>
                         {error}

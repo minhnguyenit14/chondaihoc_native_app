@@ -31,8 +31,26 @@ export default class TreeNode extends React.Component {
     return (
       <View style={[
         styles.container,
-        { paddingLeft: predecessorsCount * vars.padding/2 }
+        { paddingLeft: predecessorsCount * vars.padding / 2 }
       ]}>
+        {hasChildren &&
+          <TouchableOpacity
+            hitSlop={{
+              top: 20,
+              bottom: 20,
+              right: 20,
+              left: 20
+            }}
+            style={{paddingRight: 6}}
+            onPress={() => hasChildren && onExpand(key, expanded)}
+          >
+            <Icon
+              name={expanded ? 'angle-down' : 'angle-right'}
+              type="font-awesome"
+              size={vars.fontSizeLarge}
+              color={vars.orange}
+            />
+          </TouchableOpacity>}
         <Touchable
           onPress={() => {
             checkable && onSelect(nodeData, check);
@@ -46,21 +64,7 @@ export default class TreeNode extends React.Component {
             <Text style={[styles.label, check === 2 && styles.active]}>{label}</Text>
           </View>
         </Touchable>
-        {hasChildren &&
-          <TouchableOpacity
-            hitSlop={{
-              top: 20,
-              bottom: 20,
-              right: 20,
-              left: 20
-            }}
-            onPress={() => hasChildren && onExpand(key, expanded)}
-          >
-            <Icon
-              name={expanded ? 'angle-up' : 'angle-down'}
-              type="font-awesome"
-              size={vars.fontSizeLarge} />
-          </TouchableOpacity>}
+
       </View>
     );
   }

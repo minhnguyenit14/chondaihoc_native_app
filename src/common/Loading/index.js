@@ -2,7 +2,9 @@ import React from 'react';
 import {
   ActivityIndicator,
 } from 'react-native';
-
+import {
+  DotIndicator
+} from 'react-native-indicators';
 
 class Loading extends React.Component {
   constructor(props) {
@@ -13,17 +15,22 @@ class Loading extends React.Component {
     let {
       containerStyle,
       color,
-      size
+      size,
+      dot
     } = this.props;
     color = color || vars.orange;
     size = size || "small";
     return (
-
-      <ActivityIndicator
-        color={color}
-        size={size}
-        style={containerStyle}
-      />
+      dot ?
+        <DotIndicator
+          color={color}
+        />
+        :
+        <ActivityIndicator
+          color={color}
+          size={size}
+          style={containerStyle}
+        />
 
     );
   }

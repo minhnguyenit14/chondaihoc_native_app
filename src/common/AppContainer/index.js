@@ -82,9 +82,7 @@ class AppContainer extends Component<AppContainerProps> {
                         </ScrollView>
                     }
                 >
-
                     {children}
-
                 </DrawerLayout>
             </View>
         return (
@@ -96,7 +94,7 @@ class AppContainer extends Component<AppContainerProps> {
                     keyboardShouldPersistTaps='handled'
                     contentContainerStyle={{ flexGrow: 1 }}
                     ref={inst => this.props.scrollRef(inst)}
-                    refreshControl={refresher}
+                    refreshControl={scroll ? null : refresher}
                 >
                     {children}
                 </KeyboardAwareScrollView>

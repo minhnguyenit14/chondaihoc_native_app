@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { ViewStyles, vars, screenHeight, caculateAppMaxHeight } from '../../../styles';
+import { ViewStyles, vars, screenHeight, caculateAppMaxHeight, TextStyles } from '../../../styles';
 import { Image, Text, Caption } from '../../../common';
-import { Icon } from 'react-native-elements';
+import Icon  from 'react-native-vector-icons/dist/FontAwesome5';
 
 class UniRow extends Component {
     constructor(props) {
@@ -11,7 +11,7 @@ class UniRow extends Component {
     }
     render() {
         let { data } = this.props;
-        
+
         let point = data.UniversityPointFrom
             ? (data.UniversityPointFrom === data.UniversityPointTo
                 ? data.UniversityPointFrom
@@ -25,13 +25,13 @@ class UniRow extends Component {
                 <View style={{ flex: .3, marginRight: vars.margin }}>
                     <Image
                         style={ViewStyles.container}
-                        source={require('../../../assets/uni_logo/fpt.png')}
+                        uri={data.UniversityLogo}
                         lightbox
                     />
                 </View>
                 <View style={[{ flex: .7, justifyContent: 'space-between' }]}>
                     <View>
-                        <Text numberOfLines={2} style={styles.title}>
+                        <Text numberOfLines={2} style={[TextStyles.boldFont, styles.title]}>
                             {data.UniversityName}
                         </Text>
                         <Caption numberOfLines={3}>
@@ -47,10 +47,9 @@ class UniRow extends Component {
                         ]}
                         >
                             <Icon
-                                type="font-awesome"
                                 name="flag"
                                 size={vars.fontSizeStandard}
-                                color={vars.red}
+                                color={vars.logo}
                             />
                             <Caption style={styles.txtTag}>
                                 {point}
@@ -64,10 +63,9 @@ class UniRow extends Component {
                         ]}
                         >
                             <Icon
-                                type="font-awesome"
-                                name="map-marker"
+                                name="map-marker-alt"
                                 size={vars.fontSizeStandard}
-                                color={vars.red}
+                                color={vars.logo}
                             />
                             <Caption style={styles.txtTag}>
                                 {data.CityName}
@@ -83,6 +81,7 @@ class UniRow extends Component {
 
 const styles = StyleSheet.create({
     container: {
+        marginHorizontal: vars.margin,
         borderWidth: 1,
         borderColor: vars.borderColor,
         padding: vars.padding,
@@ -98,8 +97,8 @@ const styles = StyleSheet.create({
         elevation: vars.elevation
     },
     title: {
-        color: vars.orange,
-        fontWeight: vars.fontLightBold
+        fontWeight: vars.fontMedium,
+        lineHeight: vars.fontSizeStandard * 1.2
     },
     tag: {
         marginRight: vars.margin

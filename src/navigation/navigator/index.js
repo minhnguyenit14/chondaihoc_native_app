@@ -1,10 +1,8 @@
 import React from 'react';
-import { View } from 'react-native';
 import {
     createStackNavigator,
     createSwitchNavigator,
-    createAppContainer,
-    withNavigation
+    createAppContainer
 } from 'react-navigation';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import {
@@ -14,11 +12,12 @@ import {
     SignUp,
     Blog,
     IntroTest,
-    Test
+    Test,
+    TestResult
 } from '../../containers';
 import { getHeaderName } from '../../helper/routeNameTranslator';
-import { handleCustomTransition } from './transitions';
-import { Icon, Avatar } from 'react-native-elements';
+import { Avatar } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { fromLeft } from 'react-navigation-transitions';
 import { ROUTES } from '../../constants';
 import { vars } from '../../styles';
@@ -29,8 +28,8 @@ import { Heading } from '../../common';
 
 const AuthStack = createStackNavigator(
     {
-        Login: Login,
-        SignUp: SignUp
+        Login,
+        SignUp
     },
     {
         initialRouteName: 'Login',
@@ -42,7 +41,7 @@ const AuthStack = createStackNavigator(
 
 const UniSearchStack = createStackNavigator(
     {
-        UniSearch: UniSearch
+        UniSearch
     },
     {
         initialRouteName: "UniSearch",
@@ -52,7 +51,7 @@ const UniSearchStack = createStackNavigator(
 
 const BlogStack = createStackNavigator(
     {
-        Blog: Blog
+        Blog
     },
     {
         initialRouteName: "Blog",
@@ -65,8 +64,9 @@ const BlogStack = createStackNavigator(
 
 const TestStack = createStackNavigator(
     {
-        IntroTest: IntroTest,
-        Test: Test
+        IntroTest,
+        Test,
+        TestResult
     },
     {
         initialRouteName: "IntroTest",
@@ -79,7 +79,7 @@ const TestStack = createStackNavigator(
 
 const ProfileStack = createStackNavigator(
     {
-        Profile: Profile
+        Profile
     },
     {
         initialRouteName: "Profile",
@@ -106,7 +106,7 @@ const TabStack = createMaterialBottomTabNavigator(
         },
     },
     {
-        initialRouteName: 'IntroTest',
+        initialRouteName: 'Profile',
         swipeEnabled: true,
         animationEnabled: true,
         defaultNavigationOptions: ({ navigation, screenProps }) => (
@@ -124,17 +124,16 @@ const TabStack = createMaterialBottomTabNavigator(
                     let size = 25;
                     switch (routeName) {
                         case ROUTES.INTRO_TEST.route:
-                            iconName = "list-ul";
-                            size = 30;
+                            iconName = "clipboard-list";
                             break;
                         case ROUTES.UNI_SEARCH.route:
                             iconName = "search";
                             break;
                         case ROUTES.BLOG.route:
-                            iconName = "file";
+                            iconName = "blog";
                             break;
                         case ROUTES.PROFILE.route:
-                            iconName = "user";
+                            iconName = "user-alt";
                             // let data = screenProps;
                             // let userFullName = "";
                             // data.UserFullName.split(" ").map(c => userFullName += c.charAt(0).toUpperCase());
@@ -152,7 +151,7 @@ const TabStack = createMaterialBottomTabNavigator(
                             // />
                             break;
                     }
-                    return avatar || <Icon type='font-awesome' name={iconName} size={size} color={tintColor} />;
+                    return avatar || <Icon name={iconName} size={size} color={tintColor} />;
                 },
                 barStyle: {
                     borderTopWidth: 1,

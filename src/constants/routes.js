@@ -27,4 +27,12 @@ export default ROUTES = {
         route: "Test",
         header: "Làm trắc nghiệm"
     },
+    TEST_RESULT: {
+        route: "TestResult",
+        header: "Kết quả trắc nghiệm"
+    },
+    BLOG_DETAIL: {
+        route: "BlogDetail",
+        header: ""
+    }
 }

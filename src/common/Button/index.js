@@ -17,7 +17,9 @@ type ButtonProps = {
     loading: Boolean,
     disabled: Boolean,
     style: Array | Object,
-    danger?: Boolean
+    danger?: Boolean,
+    buttonStyle?: Array | Object,
+    secondary?: Boolean
 }
 
 class Button extends Component<ButtonProps> {
@@ -31,8 +33,17 @@ class Button extends Component<ButtonProps> {
     }
 
     render() {
-        let { title, loading, disabled, style, header, danger } = this.props;
-        let btnStyle = disabled ? styles.disabled : (danger ? [styles.btn, styles.danger] : styles.btn);
+        let { title, loading, disabled, style, header, danger, buttonStyle, secondary } = this.props;
+        let btnStyle = disabled
+            ? [styles.btn,styles.disabled]
+            : (danger
+                ? [styles.btn, styles.danger]
+                : (secondary
+                    ? [styles.btn, styles.secondary]
+                    : styles.btn
+                )
+            );
+        btnStyle = [btnStyle, buttonStyle];
         let color = disabled ? vars.textSecondary : vars.white;
         return (
             <View style={[styles.containers, style]}>
@@ -67,7 +78,7 @@ class Button extends Component<ButtonProps> {
                             />
                         }
                         <Text
-                            style={[styles.text]}
+                            style={[styles.text, secondary && { color: vars.textBase }]}
                             disabled={disabled}
                         >
                             {title}
@@ -86,6 +97,9 @@ const styles = StyleSheet.create({
     danger: {
         backgroundColor: vars.red,
     },
+    secondary: {
+        backgroundColor: vars.borderColorDarker
+    },
     btn: {
         backgroundColor: vars.orange,
         borderRadius: vars.borderRadius,
@@ -93,7 +107,7 @@ const styles = StyleSheet.create({
         height: screenHeight * 0.08,
         minHeight: caculateAppMinHeight(),
         maxHeight: caculateAppMaxHeight(),
-        display: 'flex',
+        flex: 1,
         alignItems: 'center'
     },
     loading: {
@@ -101,15 +115,10 @@ const styles = StyleSheet.create({
     },
     disabled: {
         backgroundColor: vars.borderColor,
-        borderRadius: vars.borderRadius,
-        width: screenWidth * .6,
-        height: 55,
-        display: 'flex',
-        alignItems: 'center'
     },
     text: {
         fontWeight: vars.fontMedium,
-        color: vars.white
+        color: vars.white,
     },
     header: {
         padding: vars.padding
@@ -126,7 +135,9 @@ Button.propTypes = {
     loading: PropTypes.bool,
     disabled: PropTypes.bool,
     style: PropTypes.oneOf(PropTypes.arrayOf(PropTypes.object), PropTypes.object),
-    danger: PropTypes.bool
+    danger: PropTypes.bool,
+    buttonStyle: PropTypes.oneOf(PropTypes.arrayOf(PropTypes.object), PropTypes.object),
+    secondary: PropTypes.bool
 }
 
 Button.defaultProps = {
@@ -135,7 +146,9 @@ Button.defaultProps = {
     loading: false,
     disabled: false,
     style: null,
-    danger: false
+    buttonStyle: null,
+    danger: false,
+    secondary: false
 }
 
 export default Button;

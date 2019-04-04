@@ -2,67 +2,124 @@ import React, { Component } from 'react';
 import FastImage from 'react-native-fast-image';
 import PropTypes from 'prop-types';
 import LightBox from 'react-native-lightbox';
-import { Image as Img, StyleSheet, View } from 'react-native';
-import { Icon } from 'react-native-elements';
-import { ViewStyles, vars } from '../../styles';
+import { Image as Img, View } from 'react-native';
+import Icon from 'react-native-vector-icons/dist/FontAwesome5';
+import { vars, ViewStyles } from '../../styles';
+import { Caption, Loading } from '..';
 
 type ImageProps = {
     uri?: String,
     style?: Object | Array,
     lightbox?: Boolean,
-    source?: Number,
-    resizeMode?: String
+    source?: Number | Object,
+    resizeMode?: String,
+    loading?: Boolean
 }
 
 class Image extends Component<ImageProps> {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            error: false,
+            uri: '',
+            isLoading: false
+        };
+        this.fastImg = null;
     }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.uri !== this.state.uri) {
+            this.setState({
+                error: false,
+                uri: nextProps.uri
+            })
+        }
+    }
+
+    setStatus = (error = true, isLoading = false, type) => {
+        // console.log(type)
+        if (this.state.error || error || this.state.isLoading) {
+            this.setState({
+                error,
+                isLoading
+            })
+        }
+
+    }
+
     render() {
         let {
             uri,
             style,
             lightbox,
             source,
-            resizeMode
+            resizeMode,
+            loading
         } = this.props;
+        let { error, isLoading } = this.state;
+        let status = error
+            ? <View style={[ViewStyles.container, ViewStyles.flexCenter]}>
+                <Icon
+                    size={vars.fontSizeLarge}
+                    name="image"
+                />
+                <Caption>
+                    Không thể tải ảnh!
+                </Caption>
+            </View>
+            : <View></View>
 
-        let err = <Icon
-            size={vars.fontSizeLarge}
-            type="font-awesome"
-            name="image"
-        />
+        loadingComponent = (isLoading || loading) ?
+            <View style={[
+                ViewStyles.container,
+                ViewStyles.flexCenter,
+                { position: 'absolute' },
+                loading && { zIndex: 999, backgroundColor: 'rgba(0,0,0,.6)' }
+            ]}>
+                <Loading size="large" />
+            </View>
+            : <View></View>
+
         let img = source
             ? <Img
                 style={[style]}
                 resizeMode={resizeMode}
                 source={source}
-                onError={() => err}
+                onError={() => this.setStatus(true, false, 'err')}
+                onLoadStart={() => this.setStatus(false, true, 'start')}
+                onLoadEnd={() => this.setStatus(false, false, 'end')}
             />
             : (uri
                 ? <FastImage
+                    ref={inst => this.fastImg = inst}
                     style={[style]}
                     source={{
-                        uri: uri,
-                        priority: FastImage.priority.normal,
+                        uri,
+                        priority: FastImage.priority.high,
                     }}
-                    onError={() => err}
-                    resizeMode={FastImage.resizeMode.contain}
+                    onError={() => this.setStatus(true, false, 'err')}
+                    onLoadStart={() => this.setStatus(false, true, 'start')}
+                    onLoadEnd={() => this.setStatus(false, false, 'end')}
+                    resizeMode={FastImage.resizeMode[resizeMode]}
                 />
-                : err)
-
+                : status
+            );
+        error && (img = status);
         return (
-            // <View style={[ViewStyles.container]}>
-                lightbox
-                    ? <LightBox
-                        underlayColor={vars.white}
-                    >
+            (lightbox && !error && !isLoading && !loading)
+                ?
+                <LightBox
+                    underlayColor={vars.white}
+                >
+                    <View>
+                        {loadingComponent}
                         {img}
-                    </LightBox>
-                    : img
-            // </View>
-
+                    </View>
+                </LightBox>
+                : <View>
+                    {loadingComponent}
+                    {img}
+                </View>
         );
     }
 }
@@ -71,7 +128,8 @@ Image.propTypes = {
     style: PropTypes.oneOf(PropTypes.array, PropTypes.object),
     uri: PropTypes.string,
     lightbox: PropTypes.bool,
-    source: PropTypes.oneOf(PropTypes.number, PropTypes.string),
+    loading: PropTypes.bool,
+    source: PropTypes.oneOf(PropTypes.number, PropTypes.object),
     resizeMode: PropTypes.string
 }
 
@@ -79,6 +137,7 @@ Image.defaultProps = {
     style: null,
     uri: "",
     lightbox: false,
+    loading: false,
     source: null,
     resizeMode: "contain"
 }

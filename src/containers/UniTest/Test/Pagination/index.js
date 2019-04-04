@@ -11,9 +11,8 @@ class Pagination extends Component {
     }
 
     onPageChange = (pIndex) => {
-        let {pageIndex} = this.props.uniTest;
         this.props.setPageIndex(pIndex);
-        this.props.onPageChange(pageIndex, pIndex);
+        this.props.onPageChange();
     }
 
     genPagination = () => {

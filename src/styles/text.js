@@ -11,7 +11,7 @@ const TextStyles = StyleSheet.create({
     },
     boldFont: {
         fontFamily: vars.appBoldFont,
-        lineHeight: vars.fontSizeStandard*1.5
+        lineHeight: vars.fontSizeStandard*1.6
     },
 
     //=============
