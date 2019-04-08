@@ -5,5 +5,5 @@ export const CDN_API = "https://unisec.blob.core.windows.net";
 export const AVATAR_PATH = CDN_API + "/avatar/name";
 export const UNIVERSITY_LOGO_PATH = CDN_API + "/logo/name";
 export const UNIVERSITY_IMAGE_PATH = CDN_API + "/university/name";
-export const BLOG_THUMBNAIL_PATH = ADMIN_URL + "/UserData/BlogThumbnail/name";
+export const BLOG_THUMBNAIL_PATH = CDN_API + "/blog/name";
 export const BLOG_IMAGE_PATH = ADMIN_URL + "/Images/images/name";

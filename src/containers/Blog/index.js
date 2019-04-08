@@ -1,6 +1,19 @@
 import React, { Component } from 'react';
-import { Button, AppContainer, Heading, Text, Input } from '../../common';
-import { View, FlatList, RefreshControl, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import {
+    Button,
+    AppContainer,
+    Heading,
+    Text,
+    Input
+} from '../../common';
+import {
+    View,
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    TouchableOpacity,
+    TouchableWithoutFeedback
+} from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { Icon as Icon4 } from 'react-native-elements';
 import { QUERY_HELPER } from '../../helper/queryHelper';
@@ -12,6 +25,7 @@ import {
     searchAct,
     showmoreAct
 } from "../../actions/blog";
+import { setNextTab, setCurrentTab } from '../../actions/navigationEvents';
 import BlogRow from './BlogRow';
 
 const ROW_PER_PAGE = 10;
@@ -22,7 +36,7 @@ class Blog extends Component {
         let total = navigation.getParam('total');
         let loading = navigation.getParam('loading');
         return {
-            headerTitle: (<View style={[ViewStyles.flexDirectionRow, { marginLeft: vars.margin, marginTop: vars.margin / 2 }]}>
+            headerTitle: (<View style={[ViewStyles.flexDirectionRow, { marginLeft: vars.margin }]}>
                 <Heading>{ROUTES.BLOG.header}</Heading>
                 <View style={[
                     ViewStyles.flexCenterVertical,
@@ -66,6 +80,7 @@ class Blog extends Component {
             showSearchBar: false
         };
     }
+
     componentDidMount() {
         this.props.navigation.setParams({
             search: () => this.onSearch(),
@@ -110,8 +125,9 @@ class Blog extends Component {
         return btnShowMore;
     }
 
-    createWhereClause() {
-        let searchText = this.state.searchText;
+    createWhereClause(isReSearch = false) {
+        let { searchText } = this.state;
+        isReSearch && (searchText = "");
         var pr = [];
         pr.push({
             ConditionOperation: QUERY.GroupClauseOperation.Or,
@@ -126,36 +142,39 @@ class Blog extends Component {
         return json;
     }
 
-    onSearch = (isFirstTime = false) => {
+    onSearch = (isReSearch = false) => {
+        isReSearch && this.setState({ searchText: '' });
+
         let { showSearchBar } = this.state;
-        if (showSearchBar || isFirstTime) {
+        showSearchBar && this.searchBar.bounceOutLeft(500).then(
+            () => this.setState({ showSearchBar: false })
+        )
+        if (showSearchBar || isReSearch) {
+            let whereClause = this.createWhereClause(isReSearch);
             this.setState({
-                showSearchBar: false
+                whereClause
             })
-
-            let whereClause = this.createWhereClause();
             this.props.navigation.setParams({
-                loading: true
-            });
-            this.setState({ whereClause: whereClause }, () => {
+                loading: true,
 
-                this.props.searchAct(whereClause, 0, ROW_PER_PAGE, (data) => {
-                    let d = JSON.parse(data);
-                    let blogData = JSON.parse(d.data);
-                    let totalRecords = d.totalRecords;
-                    this.props.navigation.setParams({
-                        loading: false,
-                        total: totalRecords
-                    });
-                    this.setState({
-                        blogData,
-                        totalRecords,
-                        current: 0,
-                        whereClause
-                    });
-
-                })
             });
+            this.props.searchAct(whereClause, 0, ROW_PER_PAGE, (data) => {
+                let d = JSON.parse(data);
+                let blogData = JSON.parse(d.data);
+                console.log(blogData)
+                let totalRecords = d.totalRecords;
+                this.props.navigation.setParams({
+                    loading: false,
+                    total: totalRecords
+                });
+                this.setState({
+                    blogData,
+                    totalRecords,
+                    current: 0,
+                    whereClause
+                });
+
+            })
         } else {
             this.setState({
                 showSearchBar: true
@@ -187,6 +206,7 @@ class Blog extends Component {
         let searchLoading = searchStatus === STATUS.loading;
         return (
             <AppContainer
+                tab={ROUTES.BLOG}
                 scroll={false}
                 refresher={<RefreshControl
                     onRefresh={() => this.onSearch(true)}
@@ -204,12 +224,17 @@ class Blog extends Component {
                         animation={showSearchBar ? 'bounceInRight' : 'bounceOutLeft'}
                         direction="alternate"
                         easing="ease-in-cubic"
+                        duration={500}
                     >
                         <View style={[ViewStyles.flexDirectionRow, { width: '80%', position: 'relative' }]}>
                             <Input
+                                onSubmitEditing={() => this.onSearch()}
+                                autoFocus
+                                blurOnSubmit
+                                returnKeyType={"search"}
                                 value={searchText}
                                 placeholder={PLACEHOLDER_SEARCH}
-                                onChangeText={this.onSearchTextChange}
+                                onChange={(value) => this.onSearchTextChange(value)}
                             />
                             <TouchableOpacity
                                 hitSlop={{
@@ -218,10 +243,10 @@ class Blog extends Component {
                                     right: 20,
                                     bottom: 20
                                 }}
-                                onPress={this.hide}
+                                onPress={() => this.setState({ searchText: "" })}
                                 style={styles.close}
                             >
-                                <Icon name="times-circle" size={24} />
+                                <Icon name="times" size={vars.fontSizeHeading} />
                             </TouchableOpacity>
                         </View>
                     </Animatable.View> : null
@@ -303,7 +328,10 @@ const mapDispatchToProps = dispatch => {
         },
         showmoreAct: (whereClause, indexPage, ROW_PER_PAGE, callbackSuccess) => {
             dispatch(showmoreAct(whereClause, indexPage, ROW_PER_PAGE, callbackSuccess))
-        }
+        },
+        setNextTab: (nextTab) => dispatch(setNextTab(nextTab)),
+        setCurrentTab: (currentTab) => dispatch(setCurrentTab(currentTab)),
+
     }
 }
 

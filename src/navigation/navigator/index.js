@@ -13,18 +13,19 @@ import {
     Blog,
     IntroTest,
     Test,
-    TestResult
+    TestResult,
+    UniRecommendFilter,
+    ProfileUniRecommendFilter
 } from '../../containers';
 import { getHeaderName } from '../../helper/routeNameTranslator';
 import { Avatar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
-import { fromLeft } from 'react-navigation-transitions';
+import { fromLeft, fromBottom } from 'react-navigation-transitions';
 import { ROUTES } from '../../constants';
 import { vars } from '../../styles';
 import CheckAuthScreen from './CheckAuthScreen';
-import { Heading } from '../../common';
-
-
+import { Heading, NavigationEvents } from '../../common';
+import * as Animatable from 'react-native-animatable';
 
 const AuthStack = createStackNavigator(
     {
@@ -66,7 +67,8 @@ const TestStack = createStackNavigator(
     {
         IntroTest,
         Test,
-        TestResult
+        TestResult,
+        UniRecommendFilter
     },
     {
         initialRouteName: "IntroTest",
@@ -79,7 +81,8 @@ const TestStack = createStackNavigator(
 
 const ProfileStack = createStackNavigator(
     {
-        Profile
+        Profile,
+        ProfileUniRecommendFilter
     },
     {
         initialRouteName: "Profile",
@@ -106,7 +109,7 @@ const TabStack = createMaterialBottomTabNavigator(
         },
     },
     {
-        initialRouteName: 'IntroTest',
+        initialRouteName: 'Profile',
         swipeEnabled: true,
         animationEnabled: true,
         defaultNavigationOptions: ({ navigation, screenProps }) => (
@@ -166,7 +169,7 @@ const TabStack = createMaterialBottomTabNavigator(
 );
 
 const Container = ({ navigation }) => {
-    return <TabStack screenProps={navigation.getParam("data")} navigation={navigation} />;
+    return <TabStack screenProps={navigation.getParam("data")} navigation={navigation} />
 };
 
 Container.router = TabStack.router;
@@ -180,7 +183,7 @@ export default RootNavigator = createAppContainer(
 
         },
         {
-            initialRouteName: 'Loading',
+            initialRouteName: 'Loading'
         }
     )
 )

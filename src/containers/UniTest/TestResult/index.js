@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AppContainer, Text, Heading, Title, Caption } from '../../../common';
+import { AppContainer, Title, Caption, Button } from '../../../common';
 import { View, StyleSheet } from 'react-native';
 import { ROUTES } from '../../../constants';
 import { connect } from 'react-redux';
@@ -7,6 +7,9 @@ import ResultKind from './ResultKind';
 import { Icon } from 'react-native-elements';
 import { vars, TextStyles } from '../../../styles';
 import Divider from 'react-native-divider';
+import MainMajor from './MainMajor';
+import SubMajor from './SubMajor';
+import UniRow from '../../UniSearch/UniRow';
 
 class TestResult extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -27,21 +30,12 @@ class TestResult extends Component {
             switch (i) {
                 case 0:
                     type = "first";
-                    // icon = <span className={classnames(cls.trophy, cls.second)}>
-                    //     {icon}
-                    // </span>;
                     break;
                 case 1:
                     type = "second";
-                    // icon = <span className={classnames(cls.trophy, cls.first)}>
-                    //     {icon}
-                    // </span>;
                     break;
                 case 2:
                     type = "third";
-                    // icon = <span className={classnames(cls.trophy, cls.third)}>
-                    //     {icon}
-                    // </span>;
                     break;
                 default:
                     break;
@@ -58,28 +52,145 @@ class TestResult extends Component {
         return data;
     }
 
+    renderMainMajors = (mainMajors) => {
+        let data = [];
+        mainMajors.map(m => data.push(
+            <MainMajor
+                data={m}
+                key={m.MajorID}
+            />
+        ))
+        return data;
+    }
+
+    renderSubMajors = (subMajors) => {
+        let data = [];
+        subMajors.map(m => data.push(
+            <SubMajor
+                data={m}
+                key={m.MajorID}
+            />
+        ))
+        return data;
+    }
+
+    renderUniRecommend = (topUniRecommend) => {
+        let data = [];
+        topUniRecommend.map(u => data.push(
+            <UniRow
+                data={u}
+                style={styles.uniRow}
+                key={u.UniversityID}
+            />
+        ))
+        return data;
+    }
+
+    watchMore = (profilePage) => {
+        this.props.navigation.push(
+            profilePage
+                ? ROUTES.PROFILE_UNI_RECOMMEND_FILTER.route
+                : ROUTES.UNI_RECOMMEND_FILTER.route
+        );
+    }
+
     render() {
-        let { result, kindCode, testMsg } = this.props.uniTest;
+        let { profilePage } = this.props;
+        let {
+            result,
+            kindCode,
+            testMsg,
+            mainMajors,
+            subMajors,
+            topUniRecommend
+        } = this.props[profilePage ? "profile" : "uniTest"];
         let kinds = this.renderKinds(result);
+        mainMajors = this.renderMainMajors(mainMajors);
+        subMajors = this.renderSubMajors(subMajors);
+        topUniRecommend = this.renderUniRecommend(topUniRecommend);
+        let uniLength = topUniRecommend.length;
         return (
             <AppContainer>
-                <Divider
-                    borderColor={vars.borderColorDarker}
-                    orientation="center"
-                >
-                    <Title style={[TextStyles.boldFont]}>
-                        Mã tính cách của bạn là
+                {
+                    kinds.length !== 0 &&
+                    <React.Fragment>
+                        <Divider
+                            borderColor={vars.borderColorDarker}
+                            orientation="center"
+                        >
+                            <Title style={[TextStyles.boldFont]}>
+                                Mã tính cách của bạn là
                         </Title>
-                </Divider>
-                <View style={styles.code}>
-                    <Title style={[TextStyles.boldFont, styles.textCode]}>
-                        {kindCode}
+                        </Divider>
+                        <View style={styles.code}>
+                            <Title style={[TextStyles.boldFont, styles.textCode]}>
+                                {kindCode}
+                            </Title>
+                        </View>
+                        <Caption style={styles.testMsg}>
+                            {testMsg && `(${testMsg})`}
+                        </Caption>
+                        <View style={styles.group}>
+                            {kinds}
+                        </View>
+                    </React.Fragment>
+                }
+
+                {mainMajors.length !== 0 &&
+                    <React.Fragment>
+                        <Divider
+                            borderColor={vars.borderColorDarker}
+                            orientation="center"
+                        >
+                            <Title style={[TextStyles.boldFont]}>
+                                Những ngành phù hợp nhất với bạn
                     </Title>
-                </View>
-                <Caption style={styles.testMsg}>
-                    {testMsg && `(${testMsg})`}
-                </Caption>
-                {kinds}
+                        </Divider>
+                        <View style={styles.group}>
+                            {mainMajors}
+                        </View>
+                    </React.Fragment>
+                }
+
+
+                {subMajors.length !== 0 &&
+                    <React.Fragment>
+                        <Divider
+                            borderColor={vars.borderColorDarker}
+                            orientation="center"
+                        >
+                            <Title style={[TextStyles.boldFont]}>
+                                Những ngành có thể phù hợp với bạn
+                    </Title>
+                        </Divider>
+                        <View style={styles.group}>
+                            {subMajors}
+                        </View>
+                    </React.Fragment>
+                }
+
+                {topUniRecommend.length !== 0 &&
+                    <React.Fragment>
+                        <Divider
+                            borderColor={vars.borderColorDarker}
+                            orientation="center"
+                        >
+                            <Title style={[TextStyles.boldFont]}>
+                                Top {uniLength} đại học phù hợp với bạn
+                    </Title>
+                        </Divider>
+                        <View style={styles.group}>
+                            {topUniRecommend}
+                        </View>
+                        <View>
+                            <Button
+                                danger
+                                title="Xem thêm"
+                                onPress={() => this.watchMore(profilePage)}
+                            />
+                        </View>
+                    </React.Fragment>
+                }
             </AppContainer>
         );
     }
@@ -94,8 +205,7 @@ const styles = StyleSheet.create({
         backgroundColor: vars.primaryActive
     },
     testMsg: {
-        fontStyle: 'italic',
-        marginBottom: vars.margin
+        fontStyle: 'italic'
     },
     textCode: {
         fontWeight: vars.fontBold,
@@ -103,12 +213,25 @@ const styles = StyleSheet.create({
         color: vars.white,
         textShadowOffset: vars.textShadowOffset,
         textShadowRadius: vars.textShadowRadius
+    },
+    uniRow: {
+        marginHorizontal: 0
+    },
+    group: {
+        width: '100%',
+        marginTop: vars.margin,
+        marginBottom: vars.margin * 2,
     }
 })
 
+TestResult.defaultProps = {
+    profilePage: false
+}
+
 const mapStateToProps = state => (
     {
-        uniTest: state.uniTest
+        uniTest: state.uniTest,
+        profile: state.profile
     }
 )
 

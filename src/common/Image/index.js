@@ -13,7 +13,9 @@ type ImageProps = {
     lightbox?: Boolean,
     source?: Number | Object,
     resizeMode?: String,
-    loading?: Boolean
+    loading?: Boolean,
+    errorCaptionStyle?: Object,
+    colorIcon?: Object
 }
 
 class Image extends Component<ImageProps> {
@@ -55,16 +57,19 @@ class Image extends Component<ImageProps> {
             lightbox,
             source,
             resizeMode,
-            loading
+            loading,
+            colorIcon,
+            errorCaptionStyle
         } = this.props;
         let { error, isLoading, opened } = this.state;
         let status = error
             ? <View style={[ViewStyles.container, ViewStyles.flexCenter]}>
                 <Icon
+                    color={colorIcon}
                     size={vars.fontSizeLarge}
                     name="image"
                 />
-                <Caption>
+                <Caption style={errorCaptionStyle}>
                     Không thể tải ảnh!
                 </Caption>
             </View>
@@ -110,28 +115,22 @@ class Image extends Component<ImageProps> {
             (lightbox && !error && !isLoading && !loading)
                 ?
                 <LightBox
-                    // activeProps={
-                    //     {
-                    //         style: [{
-                    //             marginTop: 50
-                    //         },
-                    //         opened && { height: screenHeight }
-                    //         ],
-                    //     }
-                    // }
+                    activeProps={
+                        {
+                            style: [opened && {
+                                position: 'relative',
+                                marginTop: 48,
+                                height: screenHeight
+                            }],
+                        }
+                    }
                     didOpen={() => setTimeout(() => this.setState({ opened: true }), 250)}
-                    onClose={() => this.setState({ opened: false })}
+                    willClose={() => this.setState({ opened: false })}
+
                     underlayColor={vars.white}>
                     <View>
                         {loadingComponent}
-                        {
-                            opened
-                                ?
-                                <View style={[{ position: 'relative', marginTop: 50, height: screenHeight }]}>
-                                    {img}
-                                </View>
-                                : img
-                        }
+                        {img}
                     </View>
                 </LightBox>
 
@@ -149,7 +148,9 @@ Image.propTypes = {
     lightbox: PropTypes.bool,
     loading: PropTypes.bool,
     source: PropTypes.oneOf(PropTypes.number, PropTypes.object),
-    resizeMode: PropTypes.string
+    resizeMode: PropTypes.string,
+    errorCaptionStyle: PropTypes.object,
+    errorCaptionStyle: PropTypes.object
 }
 
 Image.defaultProps = {
@@ -158,7 +159,9 @@ Image.defaultProps = {
     lightbox: false,
     loading: false,
     source: null,
-    resizeMode: "contain"
+    resizeMode: "contain",
+    errorCaptionStyle: null,
+    colorIcon: null
 }
 
 export default Image;

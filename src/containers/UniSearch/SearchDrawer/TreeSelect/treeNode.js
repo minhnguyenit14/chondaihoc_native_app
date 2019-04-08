@@ -36,12 +36,12 @@ export default class TreeNode extends React.Component {
         {hasChildren &&
           <TouchableOpacity
             hitSlop={{
-              top: 20,
-              bottom: 20,
-              right: 20,
-              left: 20
+              top: 100,
+              bottom: 100,
+              right: 100,
+              left: 100
             }}
-            style={{paddingRight: 6}}
+            style={styles.expander}
             onPress={() => hasChildren && onExpand(key, expanded)}
           >
             <Icon
@@ -109,5 +109,10 @@ const styles = StyleSheet.create({
     borderRadius: vars.borderRadius,
     color: vars.white,
     paddingHorizontal: vars.padding,
+  },
+  expander: {
+    paddingVertical: vars.padding / 2,
+    paddingRight: vars.padding / 2,
+    borderRadius: vars.borderRadius,
   }
 });

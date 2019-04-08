@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
         paddingVertical: vars.padding
     },
     collapsable: {
-        overflow: 'hidden',
         height: 0
     },
     kind: {

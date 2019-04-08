@@ -57,6 +57,7 @@ class Login extends Component {
                 </Heading>
 
                 <Input
+                    keyboardType={"email-address"}
                     onChange={(value) => this.onChange("setEmail", value)}
                     value={userEmail.data}
                     placeholder={"Email"}

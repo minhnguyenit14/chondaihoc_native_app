@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ViewStyles, vars, screenHeight, caculateAppMaxHeight, TextStyles } from '../../../styles';
 import { Image, Text, Caption } from '../../../common';
-import Icon  from 'react-native-vector-icons/dist/FontAwesome5';
+import Icon from 'react-native-vector-icons/dist/FontAwesome5';
+import { UNIVERSITY_LOGO_PATH } from '../../../../appConfig';
 
 class UniRow extends Component {
     constructor(props) {
@@ -10,8 +11,8 @@ class UniRow extends Component {
         this.state = {};
     }
     render() {
-        let { data } = this.props;
-
+        let { data, style } = this.props;
+        let uri = UNIVERSITY_LOGO_PATH.replace('name', data.UniversityLogo);
         let point = data.UniversityPointFrom
             ? (data.UniversityPointFrom === data.UniversityPointTo
                 ? data.UniversityPointFrom
@@ -20,12 +21,12 @@ class UniRow extends Component {
             : "-";
         return (
             <TouchableOpacity
-                style={[ViewStyles.flexDirectionRow, styles.container]}
+                style={[ViewStyles.flexDirectionRow, styles.container, style]}
             >
                 <View style={{ flex: .3, marginRight: vars.margin }}>
                     <Image
                         style={ViewStyles.container}
-                        uri={data.UniversityLogo}
+                        uri={uri}
                         lightbox
                     />
                 </View>

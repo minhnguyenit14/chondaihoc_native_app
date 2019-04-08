@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
-import { AppContainer } from '../../../common';
+import { AppContainer, NavigationEvents } from '../../../common';
 import { ROUTES, STATUS } from '../../../constants';
-import { View, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
+import {
+    View,
+    StyleSheet,
+    FlatList,
+    TouchableOpacity,
+    RefreshControl
+} from 'react-native';
 import { Icon } from 'react-native-elements';
 import { vars, screenWidth, ViewStyles } from '../../../styles';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
@@ -17,6 +23,7 @@ import {
     reset,
     setTestProgress
 } from '../../../actions/uniTest';
+import { setNextTab, setCurrentTab } from '../../../actions/navigationEvents';
 import Question from './Question';
 import * as Animatable from 'react-native-animatable';
 
@@ -72,12 +79,12 @@ class Test extends Component {
         this.getData();
     }
 
-    componentWillUnmount() {
-        let { result } = this.props.uniTest;
-        if (result.length !== 0) {
-            this.props.reset();
-        }
-    }
+    // componentWillUnmount() {
+    //     let { result } = this.props.uniTest;
+    //     if (result.length !== 0) {
+    //         this.props.reset()
+    //     }
+    // }
 
     getData = () => {
         let { questions } = this.props.uniTest;
@@ -208,6 +215,7 @@ class Test extends Component {
 
         return (
             <AppContainer
+                tab={ROUTES.INTRO_TEST}
                 scroll={false}
                 scrollRef={inst => this.scrollView = inst}
                 refresher={
@@ -291,7 +299,12 @@ const mapDispatchToProps = dispatch => {
         reset: () => dispatch(reset()),
         setTestProgress: (testProgress) => {
             dispatch(setTestProgress(testProgress))
-        }
+        },
+        setNextTab: (nextTab) => {
+            dispatch(setNextTab(nextTab))
+        },
+        setCurrentTab: (currentTab) => dispatch(setCurrentTab(currentTab)),
+
     }
 }
 

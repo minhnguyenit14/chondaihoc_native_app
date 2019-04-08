@@ -5,6 +5,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import PropTypes from 'prop-types';
 import DrawerLayout from 'react-native-gesture-handler/DrawerLayout';
 import { ScrollView } from 'react-native-gesture-handler';
+import * as Animatable from 'react-native-animatable';
+import { NavigationEvents } from '../../common';
+import { NavigationEvents as NE } from 'react-navigation';
+import { connect } from 'react-redux';
+import { setCurrentTab, setNextTab } from '../../actions/navigationEvents';
 
 type AppContainerProps = {
     children?: React.Node,
@@ -14,13 +19,55 @@ type AppContainerProps = {
     refresher?: React.Node,
     sticker?: React.Node,
     scroll?: Boolean,
-    scrollRef?: Function
+    scrollRef?: Function,
+    appAnimate?: Function
 }
 const keyboardDismissMode = Platform.OS === "ios" ? { keyboardDismissMode: "on-drag" } : { onScrollEndDrag: Keyboard.dismiss };
+const ANIMATION_TAB_CHANGE_TIME = 250;
+
 class AppContainer extends Component<AppContainerProps> {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            didMount: false
+        };
+    }
+
+    makeAnimate = (nextTab) => {
+        let { tabs, currentTab } = this.props.navigationEvents;
+        if (currentTab || nextTab) {
+            if (currentTab !== nextTab) {
+                let currentRouteIndex = 0;
+                let screenIndex = 0;
+                tabs.map((t, i) => {
+                    t.route === currentTab.route && (currentRouteIndex = i);
+                    t.route === nextTab.route && (screenIndex = i);
+                })
+                if (!currentTab.route) {
+                    this.appAnimate.fadeIn(ANIMATION_TAB_CHANGE_TIME);
+                } else if (screenIndex < currentRouteIndex) {
+                    this.appAnimate.fadeInRight(ANIMATION_TAB_CHANGE_TIME);
+                } else if (screenIndex > currentRouteIndex) {
+                    this.appAnimate.fadeInLeft(ANIMATION_TAB_CHANGE_TIME);
+                } else {
+                    this.appAnimate.fadeIn(ANIMATION_TAB_CHANGE_TIME);
+                }
+                this.props.setCurrentTab(nextTab);
+            }
+        }
+    }
+
+    setTab(payload) {
+        if (this.props) {
+            this.props.setCurrentTab();
+            this.makeAnimate({ route: payload.state.routeName })
+        }
+    }
+
+    componentWillMount() {
+        this.setState({
+            didMount: true
+        })
     }
 
     render() {
@@ -32,6 +79,7 @@ class AppContainer extends Component<AppContainerProps> {
             refresher,
             sticker,
             scroll,
+            tab
         } = this.props;
         children = <View
             style={[
@@ -86,7 +134,14 @@ class AppContainer extends Component<AppContainerProps> {
                 </DrawerLayout>
             </View>
         return (
-            <View style={styles.container}>
+            <Animatable.View
+                useNativeDriver
+                style={styles.container}
+                ref={inst => { this.appAnimate = inst; this.props.appAnimate(inst) }}
+            >
+                <NE
+                    onWillFocus={payload => this.setTab(payload)}
+                />
                 {drawer}
                 {sticker}
                 <KeyboardAwareScrollView
@@ -98,7 +153,8 @@ class AppContainer extends Component<AppContainerProps> {
                 >
                     {children}
                 </KeyboardAwareScrollView>
-            </View >
+
+            </Animatable.View >
         );
     }
 }
@@ -124,7 +180,8 @@ AppContainer.propTypes = {
     refresher: PropTypes.element,
     sticker: PropTypes.element,
     scroll: PropTypes.bool,
-    scrollRef: PropTypes.func
+    scrollRef: PropTypes.func,
+    appAnimate: PropTypes.func
 }
 
 AppContainer.defaultProps = {
@@ -135,7 +192,20 @@ AppContainer.defaultProps = {
     refresher: null,
     sticker: null,
     scroll: true,
-    scrollRef: () => { }
+    scrollRef: () => { },
+    appAnimate: () => { }
 }
 
-export default AppContainer;
+const mapStateToProps = state => ({
+    navigationEvents: state.navigationEvents
+})
+
+const mapDispatchToProps = dispatch => ({
+    setCurrentTab: (currentTab) => dispatch(setCurrentTab(currentTab)),
+    setNextTab: (nextTab) => dispatch(setNextTab(nextTab)),
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AppContainer);

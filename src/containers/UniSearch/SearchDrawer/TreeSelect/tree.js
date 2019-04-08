@@ -106,6 +106,12 @@ export default class TreeSelect extends React.Component {
     })
   }
 
+  checkNodes = (listNode) => {
+    listNode.map(node => {
+      this.onSelect(node, false)
+    })
+  }
+
   onSelect = (node, check) => {
     const { multiple } = this.props;
     const { expandedMap: preExpandedMap } = this.state;
@@ -172,7 +178,6 @@ export default class TreeSelect extends React.Component {
     const { expandedMap, selectedKeysMap } = this.state;
     const { key } = nodeData;
     const predecessorsCount = this.predecessorsOfNodeMap[key].length;
-
     return (
       <TreeNode
         onExpand={this.onExpand}

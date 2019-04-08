@@ -24,8 +24,7 @@ export const searchUniversity = (checkedMajors, universitySearch, pointFrom, poi
                 } else {
                     let resultData = res.data.ResultData;
                     let totalRecords = resultData.totalRecords;
-                    dispatch(setTotalUniversities(totalRecords));
-                    callBackSuccess(resultData.data);
+                    callBackSuccess(resultData.data, totalRecords);
                     dispatch(setSearchUniversityStatus(STATUS.success));
                 }
             },
@@ -70,7 +69,7 @@ export const getMajors = (entityName, where, order, reArrangeMajorsToTreeData, p
     }
 }
 
-export const getCities = (entityName, where, order, reArrangeCities, pageNumber = 0, rowsPerPage = 500) => {
+export const getCities = (entityName, where, order, reArrangeCities, callBackSuccess, pageNumber = 0, rowsPerPage = 500) => {
     return dispatch => {
         let body = {
             entityName,
@@ -95,6 +94,7 @@ export const getCities = (entityName, where, order, reArrangeCities, pageNumber 
                         data = JSON.parse(resultData.data);
                         data.unshift({ CityID: 0, CityName: "Tất cả" });
                         data = reArrangeCities(data);
+                        callBackSuccess(data);
                         dispatch(setCity(data[0]));
                     }
                     dispatch(setCities(data));

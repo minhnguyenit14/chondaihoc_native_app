@@ -19,4 +19,5 @@ export default API = {
     GET_ARTICLE: `${BACKEND_URL}/Home/GetDataById`,
     GET_RESULT_TEST_FREE: `${BACKEND_URL}/Holland/GetTestResult`,
     GET_QUESTIONS: `${BACKEND_URL}/Holland/GetQuestion`,
+    GET_RESULT_BY_USER_ID: `${BACKEND_URL}/Holland/GetResultByUserID`,
 }

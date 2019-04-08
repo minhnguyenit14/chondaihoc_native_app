@@ -17,15 +17,17 @@ class Loading extends React.Component {
       containerStyle,
       color,
       size,
-      dot
+      dot,
+      dotSize
     } = this.props;
     color = color || vars.orange;
     size = size || "small";
+    dotSize = dotSize || vars.fontSizeStandard / 2;
     return (
       dot ?
         <DotIndicator
           color={color}
-          size={vars.fontSizeStandard / 2}
+          size={dotSize}
         />
         :
         <ActivityIndicator

@@ -9,7 +9,6 @@ class Navigation extends Component {
         this.state = {};
     }
     componentDidMount() {
-
         setTimeout(() => { SplashScreen.hide(); }, 500);
         BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
     }
@@ -25,8 +24,9 @@ class Navigation extends Component {
         }
         return false;
     }
+
     render() {
-        return <RootNavigator />;
+        return <RootNavigator />
     }
 }
 

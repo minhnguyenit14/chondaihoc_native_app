@@ -12,6 +12,7 @@ import DatePicker from './DatePicker';
 import DismissKeyboard from './DismissKeyboard';
 import RefreshControl from './RefreshControl';
 import ImageUpload from './ImageUpload';
+import NavigationEvents from './NavigationEvents';
 
 export {
    AppContainer,
@@ -27,5 +28,6 @@ export {
    DismissKeyboard,
    DatePicker,
    RefreshControl,
-   ImageUpload
+   ImageUpload,
+   NavigationEvents
 }

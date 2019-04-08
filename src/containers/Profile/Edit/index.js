@@ -52,14 +52,17 @@ class Edit extends PureComponent {
         else return this.getResult(true, "");
     }
 
-    checkDisabled = (changePass, changeUserFullName, changeUserDOB, currentPassword, newPassword, reNewPassword) => {
+    checkDisabled = (userFullName, userDOB, changePass, changeUserFullName, changeUserDOB, currentPassword, newPassword, reNewPassword) => {
         if (changePass) {
             let isDisabled = !newPassword.data
                 || !reNewPassword.data
                 || !currentPassword.data;
             return isDisabled
         } else {
-            return !changeUserDOB || !changeUserFullName.data;
+            return !changeUserDOB
+                || !changeUserFullName.data
+                || (changeUserFullName.data === userFullName.data
+                    && moment(userDOB).isSame(moment(changeUserDOB), 'date'));
         }
     }
 
@@ -84,8 +87,7 @@ class Edit extends PureComponent {
                             "Bạn đã thay đổi mật khẩu thành công",
                             [
                                 {
-                                    text: "OK",
-                                    style: "cancel"
+                                    text: "OK"
                                 }
                             ],
                             { cancelable: true }
@@ -128,12 +130,16 @@ class Edit extends PureComponent {
             currentPassword,
             newPassword,
             reNewPassword,
-            updatePasswordStatus
+            updatePasswordStatus,
+            userFullName,
+            userDOB
         } = this.props.profile;
         let loading = changePass
             ? updatePasswordStatus === STATUS.loading
             : updateProfileStatus === STATUS.loading;
         let disabled = this.checkDisabled(
+            userFullName,
+            userDOB,
             changePass,
             changeUserFullName,
             changeUserDOB,

@@ -4,11 +4,14 @@ import { View, StyleSheet } from 'react-native';
 import { vars, TextStyles, ViewStyles } from '../../../styles';
 import { ROUTES } from '../../../constants';
 import { Icon } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { setNextTab, setCurrentTab } from '../../../actions/navigationEvents';
 
 class IntroTest extends Component {
     constructor(props) {
         super(props);
         this.state = {};
+        this.appAnimate = null;
     }
 
     goToTest = () => {
@@ -16,7 +19,7 @@ class IntroTest extends Component {
     }
     render() {
         return (
-            <AppContainer>
+            <AppContainer tab={ROUTES.INTRO_TEST}>
                 <Image source={require('../../../assets/logo/logo_horizontal.png')} />
                 <View style={[ViewStyles.flexCenter, styles.title]}>
                     <View style={styles.title_ctn}>
@@ -90,4 +93,15 @@ const styles = StyleSheet.create({
     }
 })
 
-export default IntroTest;
+const mapDispatchTopProps = dispatch => ({
+    setNextTab: (nextTab) => {
+        dispatch(setNextTab(nextTab))
+    },
+    setCurrentTab: (currentTab) => dispatch(setCurrentTab(currentTab)),
+
+})
+
+export default connect(
+    null,
+    mapDispatchTopProps
+)(IntroTest);

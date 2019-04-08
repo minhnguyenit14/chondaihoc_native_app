@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, Caption, DismissKeyboard } from '../../common';
-import { View, StyleSheet, TextInput, Keyboard} from 'react-native';
+import { View, StyleSheet, TextInput, Keyboard } from 'react-native';
 import PropTypes from 'prop-types';
 import { InputStyles, vars, ViewStyles } from '../../styles';
 import {
@@ -10,7 +10,22 @@ import {
 } from "../../styles/responsiveFunction";
 import DatePicker from 'react-native-datepicker'
 
-class Input extends Component {
+type InputProps = {
+    placeholder?: String,
+    password?: Boolean,
+    label?: String,
+    error?: String,
+    value?: String,
+    onChange?: Function,
+    format?: String,
+    style?: Object | Array,
+    onSubmitEditing?: Function,
+    returnKeyType?: String,
+    blurOnSubmit?: Boolean,
+    keyboardType?: String
+}
+
+class Input extends Component<InputProps> {
     constructor(props) {
         super(props);
         this.state = {};
@@ -18,6 +33,10 @@ class Input extends Component {
 
     onChange = (value) => {
         this.props.onChange(value);
+    }
+
+    onSubmitEditing = () => {
+        this.props.onSubmitEditing();
     }
 
     render() {
@@ -32,6 +51,9 @@ class Input extends Component {
             style,
             format,
             onChange,
+            blurOnSubmit,
+            returnKeyType,
+            keyboardType,
             ...rest
         } = this.props;
         return (
@@ -91,20 +113,24 @@ class Input extends Component {
                             }}
                             onDateChange={this.onChange}
                         />
-                        : 
+                        :
                         // <DismissKeyboard>
-                            <TextInput
-                                editable={!loading}
-                                placeholder={placeholder}
-                                onChangeText={this.onChange}
-                                secureTextEntry={password}
-                                value={value}
-                                onBlur={Keyboard.dismiss}
-                                style={[ViewStyles.flexDirectionRow, InputStyles.inputStyle]}
-                                {...rest}
-                            />
-                        /* </DismissKeyboard> */
-                    }
+                        <TextInput
+                            keyboardType={keyboardType}
+                            onSubmitEditing={this.onSubmitEditing}
+                            blurOnSubmit={blurOnSubmit}
+                            returnKeyType={returnKeyType}
+                            editable={!loading}
+                            placeholder={placeholder}
+                            onChangeText={this.onChange}
+                            secureTextEntry={password}
+                            value={value}
+                            onBlur={Keyboard.dismiss}
+                            style={[ViewStyles.flexDirectionRow, InputStyles.inputStyle]}
+                            {...rest}
+                        />
+                    /* </DismissKeyboard> */
+                }
                 {
                     error !== "" && <Caption style={styles.error}>
                         {error}
@@ -137,7 +163,11 @@ Input.propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func,
     format: PropTypes.string,
-    style: PropTypes.oneOf(PropTypes.object, PropTypes.array)
+    style: PropTypes.oneOf(PropTypes.object, PropTypes.array),
+    onSubmitEditing: PropTypes.func,
+    returnKeyType: PropTypes.string,
+    blurOnSubmit: PropTypes.bool,
+    keyboardType: PropTypes.string
 }
 
 Input.defaultProps = {
@@ -148,7 +178,11 @@ Input.defaultProps = {
     value: "",
     style: null,
     format: "YYYY-MM-DD",
-    onChange: () => { }
+    onChange: () => { },
+    onSubmitEditing: () => Keyboard.dismiss(),
+    returnKeyType: "default",
+    blurOnSubmit: false,
+    keyboardType: "default"
 }
 
 export default Input;

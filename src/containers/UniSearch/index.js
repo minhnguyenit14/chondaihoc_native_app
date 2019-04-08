@@ -10,14 +10,38 @@ import {
     getMajors,
     getCities,
     setCheckedMajors,
+    setTotalUniversities,
     setUniversities,
     searchUniversity,
     setPointFrom,
-    setPointTo
+    setPointTo,
+    reset
 } from '../../actions/uniSearch';
+import {
+    setCheckedMajorsDefault,
+    setPointFrom as setPointFromFilter,
+    setPointTo as setPointToFilter,
+    setCities as setCitiesFilter,
+    setCity,
+    setUniRecommend,
+    setTotalUniversities as setTotalUniversitiesFilter,
+    resetFilter,
+    setMajors
+} from '../../actions/uniTest';
+import {
+    setCheckedMajorsDefault as setCheckedMajorsDefaultProfile,
+    setPointFrom as setPointFromProfile,
+    setPointTo as setPointToProfile,
+    setCities as setCitiesProfile,
+    setCity as setCityProfile,
+    setUniRecommend as setUniRecommendProfile,
+    setTotalUniversities as setTotalUniversitiesProfile,
+    resetFilter as resetFilterProfile,
+    setMajors as setMajorsProfile
+} from '../../actions/profile';
+import { setNextTab, setCurrentTab } from '../../actions/navigationEvents';
 import { STATUS, ROUTES } from '../../constants';
 import * as Animatable from 'react-native-animatable';
-import { UNIVERSITY_LOGO_PATH } from '../../../appConfig';
 
 const PAGE_SIZE = 5;
 class UniSearch extends PureComponent {
@@ -25,7 +49,7 @@ class UniSearch extends PureComponent {
         let total = navigation.getParam('total');
         let loading = navigation.getParam('loading');
         return {
-            headerTitle: (<View style={[ViewStyles.flexDirectionRow, { marginTop: vars.margin / 2 }]}>
+            headerTitle: (<View style={[ViewStyles.flexDirectionRow]}>
                 <Heading>{ROUTES.UNI_SEARCH.header}</Heading>
                 <View style={[
                     ViewStyles.flexCenterVertical,
@@ -81,18 +105,36 @@ class UniSearch extends PureComponent {
             isSearch: true
         };
         this.drawer = null;
+        this.treeSelectRef = null;
     }
 
     componentDidMount() {
-        this.props.getMajors('Major', "", 'MajorID', this.reArrangeMajorsToTreeData);
-        this.props.getCities('City', "", 'CityID', this.reArrangeCities);
-        this.props.setCheckedMajors(this.props.uniSearch.checkedMajors);
+        let { uniRecommend, profilePage } = this.props;
+        let checkedMajors = [];
+        this.props.getCities('City', "", 'CityID', this.reArrangeCities, (data) => {
+            if (uniRecommend) {
+                this.props.setCitiesFilter(data);
+                this.props.setCity(data[0])
+            } else if (profilePage) {
+                this.props.setCitiesProfile(data);
+                this.props.setCityProfile(data[0])
+            }
+        });
+        if (uniRecommend || profilePage) {
+            let { treeMajors } = this.props[uniRecommend ? "uniTest" : "profile"];
+            let tree = this.reArrangeMajorsToTreeData(treeMajors);
+            this.props[uniRecommend ? "setMajors" : "setMajorsProfile"](tree);
+            treeMajors.map(t => checkedMajors.push(t.MajorID));
+            this.props[uniRecommend ? "setCheckedMajorsDefault" : "setCheckedMajorsDefaultProfile"](checkedMajors);
+        } else {
+            this.props.getMajors('Major', "", 'MajorID', this.reArrangeMajorsToTreeData);
+        }
         this.props.navigation.setParams({
             toogleDrawer: this._toggleDrawer,
             search: () => this._search("", "", true),
-            total: this.props.uniSearch.totalUniversities
+            total: this.props[uniRecommend ? "uniTest" : (profilePage ? "profile" : "uniSearch")].totalUniversities
         });
-        this._search("", "", true);
+        this._search("", "", true, checkedMajors);
     }
 
     reArrangeCities = (data) => {
@@ -125,40 +167,76 @@ class UniSearch extends PureComponent {
         return tree;
     }
 
-    _search = (pageIndex = 0, pageSize = PAGE_SIZE, isSearch = false) => {
+    _search = (pageIndex = 0, pageSize = PAGE_SIZE, isSearch = false, checkedMajorsDefault = []) => {
+        let { uniRecommend, profilePage } = this.props;
+        let location = uniRecommend ? "uniTest" : (profilePage ? "profile" : "uniSearch");
+        isSearch && this.treeSelectRef && (
+            this.props[uniRecommend ? "resetFilter" : (profilePage ? "resetFilterProfile" : "reset")],
+            this.treeSelectRef.reset()
+        );
         let {
             universitySearch,
             pointFrom,
-            pointTo,
-            city,
-        } = this.props.uniSearch;
+            pointTo
+        } = this.props[location];
+
         pageIndex = pageIndex || this.state.pageIndex;
         pageIndex = isSearch ? 0 : pageIndex;
         pageSize = pageSize || this.state.pageSize;
         if (pointFrom.data !== "") {
             if (isNaN(pointFrom.data)) {
-                this.props.setPointFrom(pointFrom.data, "Hãy nhập một số hợp lệ!");
+                this.props[uniRecommend
+                    ? "setPointFromFilter"
+                    : (profilePage
+                        ? "setPointFromProfile"
+                        : "setPointFrom"
+                    )](pointFrom.data, "Hãy nhập một số hợp lệ!");
                 return;
             } else if (pointFrom.data < 0) {
-                this.props.setPointFrom(pointFrom.data, "Hãy nhập một số dương!");
+                this.props[uniRecommend
+                    ? "setPointFromFilter"
+                    : (profilePage
+                        ? "setPointFromProfile"
+                        : "setPointFrom"
+                    )](pointFrom.data, "Hãy nhập một số dương!");
                 return;
             }
         } else if (pointTo.data !== "") {
             if (isNaN(pointTo.data)) {
-                this.props.setPointTo(pointTo.data, "Hãy nhập một số hợp lệ!");
+                this.props[uniRecommend
+                    ? "setPointToFilter"
+                    : (profilePage
+                        ? "setPointToProfile"
+                        : "setPointTo"
+                    )](pointTo.data, "Hãy nhập một số hợp lệ!");
                 return;
             } else if (pointTo.data < 0) {
-                this.props.setPointTo(pointTo.data, "Hãy nhập một số dương!");
+                this.props[uniRecommend
+                    ? "setPointToFilter"
+                    : (profilePage
+                        ? "setPointToProfile"
+                        : "setPointTo"
+                    )](pointTo.data, "Hãy nhập một số dương!");
                 return;
             }
         }
         if (pointFrom.data !== "" && pointTo.data !== "") {
             if (pointFrom.data > pointTo.data) {
-                this.props.setPointFrom(pointFrom.data, "Khoảng điểm không hợp lệ");
+                this.props[uniRecommend
+                    ? "setPointFromFilter"
+                    : (profilePage
+                        ? "setPointFromProfile"
+                        : "setPointFrom"
+                    )](pointFrom.data, "Khoảng điểm không hợp lệ");
                 return;
             }
             if (pointTo.data < pointFrom.data) {
-                this.props.setPointTo(pointTo.data, "Khoảng điểm không hợp lệ");
+                this.props[uniRecommend
+                    ? "setPointToFilter"
+                    : (profilePage
+                        ? "setPointToProfile"
+                        : "setPointTo"
+                    )](pointTo.data, "Khoảng điểm không hợp lệ");
                 return;
             }
         }
@@ -166,23 +244,50 @@ class UniSearch extends PureComponent {
         this.setState({
             isSearch
         });
-        let { checkedMajors, universities } = this.props.uniSearch;
         this.props.navigation.setParams({
             loading: true
         });
+        let {
+            checkedMajors,
+            universities,
+            city
+        } = this.props[location];
+        (uniRecommend || profilePage)
+            && checkedMajors.length === 0
+            && (checkedMajors = checkedMajorsDefault.length !== 0
+                ? checkedMajorsDefault
+                : (profilePage
+                    ? this.props.profile.checkedMajorsDefault
+                    : this.props.uniTest.checkedMajorsDefault
+                )
+            );
         this.props.searchUniversity(
             checkedMajors,
             universitySearch.data,
             pointFrom.data,
             pointTo.data,
             city.data.id,
-            (data) => {
-                data.forEach(d => d.UniversityLogo = UNIVERSITY_LOGO_PATH.replace('name', d.UniversityLogo))
-                isSearch ?
-                    this.props.setUniversities(data) :
-                    this.props.setUniversities(universities.concat(data));
+            (data, totalUniversities) => {
+                this.props[uniRecommend
+                    ? "setUniRecommend"
+                    : (profilePage
+                        ? "setUniRecommendProfile"
+                        : "setUniversities")](
+                            isSearch
+                                ? data
+                                : universities.concat(data)
+                        );
+                this.props[
+                    uniRecommend
+                        ? "setTotalUniversitiesFilter"
+                        : (
+                            profilePage
+                                ? "setTotalUniversitiesProfile"
+                                : "setTotalUniversities"
+                        )
+                ](totalUniversities);
                 this.props.navigation.setParams({
-                    total: this.props.uniSearch.totalUniversities,
+                    total: this.props[location].totalUniversities,
                     loading: false
                 });
             },
@@ -207,6 +312,7 @@ class UniSearch extends PureComponent {
             })
         }
     }
+
     openDrawer = () => {
         this.setState({
             toogleDrawer: true
@@ -228,10 +334,18 @@ class UniSearch extends PureComponent {
     }
 
     render() {
+        let { uniRecommend, profilePage } = this.props;
+        let tab = uniRecommend ? ROUTES.INTRO_TEST : (profilePage ? ROUTES.PROFILE : ROUTES.UNI_SEARCH);
         let { isSearch } = this.state;
-        let { searchUniversityStatus, totalUniversities, universities } = this.props.uniSearch;
+        let { searchUniversityStatus } = this.props.uniSearch;
+        let {
+            universities,
+            totalUniversities,
+            majors
+        } = this.props[uniRecommend ? "uniTest" : (profilePage ? "profile" : "uniSearch")];
         let loading = searchUniversityStatus === STATUS.loading;
-        btnShowMore = (loading && isSearch) || (universities.length < totalUniversities &&
+        btnShowMore = (loading && isSearch) || (
+            universities.length < totalUniversities &&
             <Button
                 style={{ marginVertical: vars.margin }}
                 danger
@@ -243,9 +357,18 @@ class UniSearch extends PureComponent {
         )
         return (
             <AppContainer
+                tab={tab}
                 scroll={false}
                 showDrawer
-                drawerDataInside={<SearchDrawer />}
+                drawerDataInside={
+                    <SearchDrawer
+                        search={() => this._search("", "", true)}
+                        majors={majors}
+                        uniRecommend={uniRecommend}
+                        profilePage={profilePage}
+                        treeSelectRef={node => this.treeSelectRef = node}
+                    />
+                }
                 drawer={(drawer) => this.drawer = drawer}
                 onDrawerOpen={this.openDrawer}
                 onDrawerClose={this.closeDrawer}
@@ -289,9 +412,16 @@ class UniSearch extends PureComponent {
     }
 }
 
+UniSearch.defaultProps = {
+    uniRecommend: false,
+    profilePage: false
+}
+
 const mapStateToProps = state => {
     return {
-        uniSearch: state.uniSearch
+        uniSearch: state.uniSearch,
+        uniTest: state.uniTest,
+        profile: state.profile
     }
 }
 
@@ -300,8 +430,8 @@ const mapDispatchToProps = dispatch => {
         getMajors: (entityName, where, order, reArrangeMajorsToTreeData, pageNumber, rowsPerPage) => {
             dispatch(getMajors(entityName, where, order, reArrangeMajorsToTreeData, pageNumber, rowsPerPage))
         },
-        getCities: (entityName, where, order, reArrangeCities, pageNumber, rowsPerPage) => {
-            dispatch(getCities(entityName, where, order, reArrangeCities, pageNumber, rowsPerPage))
+        getCities: (entityName, where, order, reArrangeCities, callBackSuccess, pageNumber, rowsPerPage) => {
+            dispatch(getCities(entityName, where, order, reArrangeCities, callBackSuccess, pageNumber, rowsPerPage))
         },
         setCheckedMajors: (majors) => {
             dispatch(setCheckedMajors(majors))
@@ -317,6 +447,70 @@ const mapDispatchToProps = dispatch => {
         },
         setPointTo: (data, error) => {
             dispatch(setPointTo(data, error))
+        },
+        reset: () => {
+            dispatch(reset())
+        },
+        setNextTab: (nextTab) => {
+            dispatch(setNextTab(nextTab))
+        },
+        setCurrentTab: (currentTab) => dispatch(setCurrentTab(currentTab)),
+        setPointFromFilter: (data, error) => {
+            dispatch(setPointFromFilter(data, error))
+        },
+        setPointToFilter: (data, error) => {
+            dispatch(setPointToFilter(data, error))
+        },
+        setCity: (data, error) => {
+            dispatch(setCity(data, error))
+        },
+        setCheckedMajorsDefault: (majors) => {
+            dispatch(setCheckedMajorsDefault(majors))
+        },
+        setMajors: (majors) => {
+            dispatch(setMajors(majors))
+        },
+        resetFilter: () => {
+            dispatch(resetFilter())
+        },
+        setUniRecommend: (universities) => {
+            dispatch(setUniRecommend(universities))
+        },
+        setCitiesFilter: (cities) => {
+            dispatch(setCitiesFilter(cities))
+        },
+        setTotalUniversities: (totalUniversities) => {
+            dispatch(setTotalUniversities(totalUniversities))
+        },
+        setTotalUniversitiesFilter: (totalUniversities) => {
+            dispatch(setTotalUniversitiesFilter(totalUniversities))
+        },
+        setPointFromProfile: (data, error) => {
+            dispatch(setPointFromProfile(data, error))
+        },
+        setPointToProfile: (data, error) => {
+            dispatch(setPointToProfile(data, error))
+        },
+        setCityProfile: (data, error) => {
+            dispatch(setCityProfile(data, error))
+        },
+        setCheckedMajorsDefaultProfile: (majors) => {
+            dispatch(setCheckedMajorsDefaultProfile(majors))
+        },
+        setMajorsProfile: (majors) => {
+            dispatch(setMajorsProfile(majors))
+        },
+        resetFilterProfile: () => {
+            dispatch(resetFilterProfile())
+        },
+        setUniRecommendProfile: (universities) => {
+            dispatch(setUniRecommendProfile(universities))
+        },
+        setCitiesProfile: (cities) => {
+            dispatch(setCitiesProfile(cities))
+        },
+        setTotalUniversitiesProfile: (totalUniversities) => {
+            dispatch(setTotalUniversitiesProfile(totalUniversities))
         }
     }
 }

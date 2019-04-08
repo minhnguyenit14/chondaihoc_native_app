@@ -1,8 +1,4 @@
 export default ROUTES = {
-    PROFILE: {
-        route: "Profile",
-        header: "Trang cá nhân"
-    },
     LOG_IN: {
         route: "Login",
         header: "Đăng nhập"
@@ -14,10 +10,6 @@ export default ROUTES = {
     UNI_SEARCH: {
         route: "UniSearch",
         header: "Tra cứu đại học"
-    },
-    BLOG: {
-        route: "Blog",
-        header: "Blog"
     },
     INTRO_TEST: {
         route: "IntroTest",
@@ -31,8 +23,24 @@ export default ROUTES = {
         route: "TestResult",
         header: "Kết quả trắc nghiệm"
     },
+    UNI_RECOMMEND_FILTER: {
+        route: "UniRecommendFilter",
+        header: "Tra cứu đại học đề xuất"
+    },
+    BLOG: {
+        route: "Blog",
+        header: "Blog"
+    },
     BLOG_DETAIL: {
         route: "BlogDetail",
         header: ""
-    }
+    },
+    PROFILE: {
+        route: "Profile",
+        header: "Trang cá nhân"
+    },
+    PROFILE_UNI_RECOMMEND_FILTER: {
+        route: "ProfileUniRecommendFilter",
+        header: "Tra cứu đại học đề xuất"
+    },
 }

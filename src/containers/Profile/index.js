@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View, TouchableOpacity, Alert } from 'react-native';
-import { STATUS } from '../../constants';
+import { STATUS, ROUTES } from '../../constants';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { StyleSheet } from 'react-native';
-import { AppContainer } from '../../common';
+import { AppContainer, Loading } from '../../common';
 import { getStorage } from '../../helper/axiosHelper';
 import { AVATAR_PATH } from '../../../appConfig';
 import { vars, screenHeight } from '../../styles';
@@ -14,11 +14,15 @@ import {
     uploadImage,
     updateProfile,
     setAvatar,
-    resetEditForm
+    resetEditForm,
+    getTestResultByUserID
 } from '../../actions/profile';
+import { setNextTab, setCurrentTab } from '../../actions/navigationEvents';
+import { NavigationEvents } from 'react-navigation';
 import { logOut } from '../../actions/logout';
 import Avatar from './Avatar';
 import Edit from './Edit';
+import TestResult from '../UniTest/TestResult';
 
 const ENTITY_NAME = 'User';
 const EDIT_MODE = 'Edit';
@@ -75,10 +79,10 @@ class Profile extends Component {
                     // userFullName
                 });
             });
+            this.getTestResult(userID);
         } else {
             getStorage().then(
                 storage => {
-                    console.log(storage, this.props.login)
                     let userID = storage.userID || this.props.login.userID;
                     this.props.getProfile(userID, (data) => {
                         let {
@@ -91,9 +95,24 @@ class Profile extends Component {
                             // userFullName
                         });
                     });
+                    this.getTestResult(userID);
                 }
             )
         }
+    }
+
+    getTestResult = (userID = null) => {
+        if (userID) {
+            this.props.getTestResultByUserID(userID, () => { });
+        } else {
+            getStorage().then(
+                storage => {
+                    let userID = storage.userID || this.props.login.userID;
+                    this.props.getTestResultByUserID(userID, () => { });
+                }
+            )
+        }
+
     }
 
     _logout = () => {
@@ -162,6 +181,12 @@ class Profile extends Component {
         this.props.resetEditForm();
     }
 
+    checkTested = () => {
+        let { getResultStatus } = this.props.uniTest;
+        getResultStatus === STATUS.success &&
+            this.getTestResult();
+    }
+
     render() {
         let {
             avatarUrl,
@@ -174,14 +199,17 @@ class Profile extends Component {
             getProfileStatus,
             uploadTempImageStatus,
             uploadImageStatus,
-            updateProfileStatus
+            updateProfileStatus,
+            getTestResultByUserIDStatus
         } = this.props.profile;
         let loading = getProfileStatus === STATUS.loading || updateProfileStatus === STATUS.loading;
+        let getTestLoading = getTestResultByUserIDStatus === STATUS.loading && <Loading dot />;
         let color = loading ? vars.borderColorDarker : vars.primaryHover;
         let avaLoading = uploadTempImageStatus === STATUS.loading || uploadImageStatus === STATUS.loading;
 
         return (
             <AppContainer
+                tab={ROUTES.PROFILE}
                 sticker={
                     <React.Fragment>
                         <Edit
@@ -194,7 +222,9 @@ class Profile extends Component {
                     </React.Fragment>
                 }
             >
-
+                <NavigationEvents
+                    onDidFocus={this.checkTested}
+                />
                 <View style={{ width: '100%', flex: 1 }}>
                     <Avatar
                         loading={loading}
@@ -232,6 +262,12 @@ class Profile extends Component {
                             />
                         </TouchableOpacity>
                     </View>
+                    {getTestLoading ||
+                        <TestResult
+                            profilePage
+                            navigation={this.props.navigation}
+                        />
+                    }
                 </View>
             </AppContainer>
         );
@@ -248,18 +284,18 @@ const styles = StyleSheet.create({
     },
     changePass: {
         position: 'absolute',
-        top: vars.margin * 3,
+        top: vars.margin * 3.5,
         right: vars.margin / 2,
     },
     editContainer: {
         position: 'absolute',
-        top: 0,
+        top: vars.margin / 2,
         right: vars.margin / 2,
     },
     edit: {
         backgroundColor: vars.white,
         borderWidth: 2,
-        borderColor: 'rgba(0,0,0,.6)',
+        borderColor: 'rgba(0,0,0,.3)',
         width: 30,
         height: 30,
         borderRadius: vars.borderRadius
@@ -278,7 +314,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
     return {
         profile: state.profile,
-        login: state.login
+        login: state.login,
+        uniTest: state.uniTest
     }
 }
 
@@ -304,7 +341,12 @@ const mapDispatchToProps = dispatch => {
         },
         logOut: () => {
             dispatch(logOut())
-        }
+        },
+        setNextTab: (nextTab) => {
+            dispatch(setNextTab(nextTab))
+        },
+        setCurrentTab: (currentTab) => dispatch(setCurrentTab(currentTab)),
+        getTestResultByUserID: (userID, callBackSuccess) => dispatch(getTestResultByUserID(userID, callBackSuccess))
     }
 }
 

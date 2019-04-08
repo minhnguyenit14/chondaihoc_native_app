@@ -11,18 +11,77 @@ const initState = {
     totalQuestions: 0,
     totalAnswered: 0,
     pagesAnswered: [],
+    mainMajors: [],
+    subMajors: [],
+    treeMajors: [],
+    universities: [],
     result: [],
     kindCode: "",
     testMsg: "",
     questionKind: "",
     questionSetID: "",
     testProgress: 0,
+    totalUniversities: 0,
+    pointFrom: { data: "", error: "" },
+    pointTo: { data: "", error: "" },
+    universitySearch: { data: "", error: "" },
+    checkedMajors: [],
+    topUniRecommend: [],
+    majors: [],
+    cities: [],
+    checkedMajorsDefault: [],
+    city: { data: "", error: "" },
     getQuestionsStatus: STATUS.default,
     getResultStatus: STATUS.default
 }
 
 const uniTest = (state = initState, action) => {
     switch (action.type) {
+        case types.SET_TOP_UNI_RECOMMEND:
+            return {
+                ...state,
+                topUniRecommend: action.topUniRecommend
+            }
+        case types.SET_CHECKED_MAJORS_DEFAULT:
+            return {
+                ...state,
+                checkedMajorsDefault: action.checkedMajorsDefault
+            }
+        case types.SET_CITIES:
+            return {
+                ...state,
+                cities: action.cities
+            }
+        case types.SET_CITY:
+            return {
+                ...state,
+                city: action.city
+            }
+        case types.SET_UNIVERSITY_SEARCH:
+            return {
+                ...state,
+                universitySearch: action.universitySearch
+            }
+        case types.SET_MAJORS:
+            return {
+                ...state,
+                majors: action.majors
+            }
+        case types.SET_POINT_FROM:
+            return {
+                ...state,
+                pointFrom: action.pointFrom
+            }
+        case types.SET_POINT_TO:
+            return {
+                ...state,
+                pointTo: action.pointTo
+            }
+        case types.SET_CHECKED_MAJORS:
+            return {
+                ...state,
+                checkedMajors: action.checkedMajors
+            }
         case types.SET_TOTAL_ANSWERED:
             return {
                 ...state,
@@ -107,10 +166,43 @@ const uniTest = (state = initState, action) => {
             return {
                 ...initState
             }
+        case types.RESET_FILTER:
+            return {
+                ...state,
+                pointFrom: initState.pointFrom,
+                pointTo: initState.pointTo,
+                checkedMajors: initState.checkedMajors,
+                universitySearch: initState.universitySearch
+            }
         case types.SET_TEST_PROGRESS:
             return {
                 ...state,
                 testProgress: action.testProgress
+            }
+        case types.SET_MAIN_MAJORS:
+            return {
+                ...state,
+                mainMajors: action.mainMajors
+            }
+        case types.SET_SUB_MAJORS:
+            return {
+                ...state,
+                subMajors: action.subMajors
+            }
+        case types.SET_TREE_MAJORS:
+            return {
+                ...state,
+                treeMajors: action.treeMajors
+            }
+        case types.SET_UNI_RECOMMEND:
+            return {
+                ...state,
+                universities: action.uniRecommend
+            }
+        case types.SET_TOTAL_UNIVERSITIES:
+            return {
+                ...state,
+                totalUniversities: action.totalUniversities
             }
         default:
             return state

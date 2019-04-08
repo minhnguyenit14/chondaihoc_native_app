@@ -4,6 +4,7 @@ import { ROUTES } from '../../../constants';
 import { ViewStyles, screenHeight, caculateAppMaxHeight, TextStyles, vars } from "../../../styles";
 import { Image, Caption, Text } from "../../../common";
 import moment from 'moment';
+import { BLOG_THUMBNAIL_PATH } from "../../../../appConfig";
 let vi = require('moment/locale/vi.js');
 
 class BlogRow extends Component {
@@ -34,14 +35,19 @@ class BlogRow extends Component {
             ArticleAuthor,
             ArticleShortDescription
         } = this.props.data;
+        let uri = BLOG_THUMBNAIL_PATH.replace("name", ArticleImages);
+        console.log(uri, ArticleImages)
+
         let formatDate = this.formatDate(CreatedDate);
         return (
             <TouchableOpacity style={[ViewStyles.flexDirectionRow, styles.container]}>
                 <View style={[styles.imgContainer]}>
                     <Image
+                        errorCaptionStyle={{ color: vars.white }}
+                        colorIcon={vars.white}
                         style={styles.img}
                         lightbox
-                        uri={ArticleImages}
+                        uri={uri}
                     />
                 </View>
                 <View style={styles.content}>
@@ -53,8 +59,8 @@ class BlogRow extends Component {
                             {ArticleShortDescription}
                         </Caption>
                     </View>
-                    <Caption>
-                        {`${ArticleAuthor}• ${formatDate}`}
+                    <Caption style={styles.subInfo}>
+                        {`${ArticleAuthor} • ${formatDate}`}
                     </Caption>
                 </View>
             </TouchableOpacity>
@@ -97,6 +103,10 @@ const styles = StyleSheet.create({
     content: {
         flex: .7,
         justifyContent: 'space-between'
+    },
+    subInfo: {
+        fontSize: vars.fontSizeSmall / 1.1,
+        fontWeight: vars.fontMedium,
     }
 })
 

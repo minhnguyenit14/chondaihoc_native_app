@@ -2,6 +2,7 @@ import { API, STATUS } from '../../constants';
 import { post } from '../../helper/axiosHelper';
 import types from './types';
 import { Alert } from 'react-native';
+import { getFilterData } from '../uniTest';
 
 export const getDateFromString = (dateStr) => {
     let d = new Date(dateStr);
@@ -59,6 +60,7 @@ export const getProfile = (id, callBackSuccess) => {
         )
     }
 };
+
 export const updateProfile = (profile, callBackSuccess) => {
     return dispatch => {
         let body = {
@@ -263,6 +265,155 @@ export const updatePassword = (userPassword, userNewPassword, userEmail, callBac
         });
     }
 };
+
+export const getTestResultByUserID = (UserID, callBackSuccess) => {
+    return dispatch => {
+        let url = API.GET_RESULT_BY_USER_ID;
+        let body = {
+            UserID
+        }
+        dispatch(setGetTestResultByUserIDStatus(STATUS.loading));
+        post(url, body).then(res => {
+            if (res.data.Error) {
+                Alert.alert(
+                    "Lỗi",
+                    res.data.Message,
+                    [
+                        {
+                            text: "OK",
+                            style: "cancel"
+                        }
+                    ],
+                    { cancelable: true }
+                )
+                dispatch(setGetTestResultByUserIDStatus(STATUS.error))
+            } else {
+                let resultData = res.data.ResultData;
+                let { kindCode, data } = getFilterData(resultData.CharacterKind);
+                dispatch(setMainMajors(resultData.MainMajor));
+                dispatch(setSubMajors(resultData.SubMajor));
+                dispatch(setTreeMajors(resultData.TreeMajor));
+                dispatch(setTopUniRecommend(resultData.University));
+                dispatch(setResult(data));
+                dispatch(setTestMsg(resultData.TestMsg[0].TestMsg));
+                dispatch(setKindCode(kindCode));
+                dispatch(setGetTestResultByUserIDStatus(STATUS.success))
+                callBackSuccess()
+            }
+        }).catch(rej => {
+            Alert.alert(
+                "Lỗi",
+                rej,
+                [
+                    {
+                        text: "OK",
+                        style: "cancel"
+                    }
+                ],
+                { cancelable: true }
+            )
+            dispatch(setGetTestResultByUserIDStatus(STATUS.error));
+        });
+    }
+};
+
+export const setCheckedMajorsDefault = (checkedMajorsDefault = []) => ({
+    type: types.SET_CHECKED_MAJORS_DEFAULT,
+    checkedMajorsDefault
+})
+
+export const setUniversitySearch = (data = "", error = "") => ({
+    type: types.SET_UNIVERSITY_SEARCH,
+    universitySearch: { data, error }
+})
+
+export const setPointFrom = (data = "", error = "") => ({
+    type: types.SET_POINT_FROM,
+    pointFrom: { data, error }
+})
+
+export const setPointTo = (data = "", error = "") => ({
+    type: types.SET_POINT_TO,
+    pointTo: { data, error }
+})
+
+export const setCheckedMajors = (checkedMajors = []) => ({
+    type: types.SET_CHECKED_MAJORS,
+    checkedMajors
+})
+
+export const setMajors = (majors = []) => ({
+    type: types.SET_MAJORS,
+    majors
+})
+
+export const reset = () => ({
+    type: types.RESET
+})
+
+export const setResult = (result) => ({
+    type: types.SET_RESULT,
+    result
+})
+
+export const setKindCode = (kindCode = "") => ({
+    type: types.SET_KIND_CODE,
+    kindCode
+})
+
+export const setTestMsg = (testMsg = "") => ({
+    type: types.SET_TEST_MSG,
+    testMsg
+})
+
+export const setMainMajors = (mainMajors = []) => ({
+    type: types.SET_MAIN_MAJORS,
+    mainMajors
+})
+
+export const setSubMajors = (subMajors = []) => ({
+    type: types.SET_SUB_MAJORS,
+    subMajors
+})
+
+export const setTreeMajors = (treeMajors = []) => ({
+    type: types.SET_TREE_MAJORS,
+    treeMajors
+})
+
+export const setUniRecommend = (uniRecommend = []) => ({
+    type: types.SET_UNI_RECOMMEND,
+    uniRecommend
+})
+
+export const setTopUniRecommend = (topUniRecommend = []) => ({
+    type: types.SET_TOP_UNI_RECOMMEND,
+    topUniRecommend
+})
+
+export const setCities = (cities) => ({
+    type: types.SET_CITIES,
+    cities
+})
+
+export const setCity = (data = { id: 0, value: 'Tất cả' }, error = "") => ({
+    type: types.SET_CITY,
+    city: { data, error }
+})
+
+export const setTotalUniversities = (totalUniversities) => ({
+    type: types.SET_TOTAL_UNIVERSITIES,
+    totalUniversities
+})
+
+export const resetFilter = () => ({
+    type: types.RESET_FILTER
+})
+
+export const setGetTestResultByUserIDStatus = (status) => ({
+    type: types.SET_GET_TEST_RESULT_BY_USER_ID,
+    status
+})
 
 export const setUpdatePasswordFormError = (message = "") => ({
     type: types.SET_UPDATE_PASSWORD_FORM_ERROR,

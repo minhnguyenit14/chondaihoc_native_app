@@ -1,12 +1,14 @@
 import Login from './Login';
 import SignUp from './SignUp';
 import Profile from './Profile';
+import ProfileUniRecommendFilter from './Profile/ProfleUniRecommendFilter';
 import UniSearch from './UniSearch';
 import Blog from './Blog';
 import {
     IntroTest,
     Test,
-    TestResult
+    TestResult,
+    UniRecommendFilter
 } from './UniTest';
 
 export {
@@ -17,5 +19,7 @@ export {
     Blog,
     IntroTest,
     Test,
-    TestResult
+    TestResult,
+    UniRecommendFilter,
+    ProfileUniRecommendFilter
 }

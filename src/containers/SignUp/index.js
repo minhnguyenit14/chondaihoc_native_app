@@ -140,6 +140,7 @@ class SignUp extends Component {
                     Đăng Ký
                 </Heading>
                 <Input
+                    keyboardType={"email-address"}
                     loading={isLoading}
                     onChange={(value) => this.onChange("setEmail", value)}
                     value={userEmail.data}

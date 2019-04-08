@@ -5,6 +5,7 @@ import uniSearch from './uniSearch';
 import uniTest from './uniTest';
 import blog from './blog';
 import profile from './profile';
+import navigationEvents from './navigationEvents';
 import types from '../actions/logout/types';
 import { removeStorage } from "../helper/axiosHelper";
 
@@ -14,7 +15,8 @@ const appReducer = combineReducers({
     uniSearch,
     uniTest,
     blog,
-    profile
+    profile,
+    navigationEvents
 })
 
 export default rootReducers = (state, action) => {

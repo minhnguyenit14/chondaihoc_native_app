@@ -28,7 +28,7 @@ const pagination = (quesList, pageSize) => {
     return { questions, answers };
 }
 
-const getFilterData = (data) => {
+export const getFilterData = (data) => {
     let kindCode = "";
     data.map((d, i) => {
         kindCode += d.CharacterKindName.charAt(0);
@@ -93,11 +93,15 @@ export const getResult = (data, userID, questionKind, questionSetID, callBackSuc
                 } else {
                     let resultData = res.data.ResultData;
                     let { kindCode, data } = getFilterData(resultData.CharacterKind);
+                    dispatch(setMainMajors(resultData.MainMajor));
+                    dispatch(setSubMajors(resultData.SubMajor));
+                    dispatch(setTreeMajors(resultData.TreeMajor));
+                    dispatch(setTopUniRecommend(resultData.University));
                     dispatch(setResult(data));
-                    dispatch(setTestMsg(resultData.TestMsg));
+                    dispatch(setTestMsg(resultData.TestMsg[0].TestMsg));
                     dispatch(setKindCode(kindCode));
                     dispatch(setGetResultStatus(STATUS.success));
-                    callBackSuccess()
+                    callBackSuccess(resultData.TreeMajor);
                 }
             },
             rej => {
@@ -106,6 +110,36 @@ export const getResult = (data, userID, questionKind, questionSetID, callBackSuc
         )
     }
 }
+
+export const setCheckedMajorsDefault = (checkedMajorsDefault = []) => ({
+    type: types.SET_CHECKED_MAJORS_DEFAULT,
+    checkedMajorsDefault
+})
+
+export const setUniversitySearch = (data = "", error = "") => ({
+    type: types.SET_UNIVERSITY_SEARCH,
+    universitySearch: { data, error }
+})
+
+export const setPointFrom = (data = "", error = "") => ({
+    type: types.SET_POINT_FROM,
+    pointFrom: { data, error }
+})
+
+export const setPointTo = (data = "", error = "") => ({
+    type: types.SET_POINT_TO,
+    pointTo: { data, error }
+})
+
+export const setCheckedMajors = (checkedMajors = []) => ({
+    type: types.SET_CHECKED_MAJORS,
+    checkedMajors
+})
+
+export const setMajors = (majors = []) => ({
+    type: types.SET_MAJORS,
+    majors
+})
 
 export const setTotalAnswered = (totalAnswered) => ({
     type: types.SET_TOTAL_ANSWERED,
@@ -172,12 +206,12 @@ export const setResult = (result) => ({
     result
 })
 
-export const setKindCode = (kindCode) => ({
+export const setKindCode = (kindCode = "") => ({
     type: types.SET_KIND_CODE,
     kindCode
 })
 
-export const setTestMsg = (testMsg) => ({
+export const setTestMsg = (testMsg = "") => ({
     type: types.SET_TEST_MSG,
     testMsg
 })
@@ -192,6 +226,50 @@ export const setQuestionSetID = (questionSetID = "") => ({
     questionSetID
 })
 
+export const setMainMajors = (mainMajors = []) => ({
+    type: types.SET_MAIN_MAJORS,
+    mainMajors
+})
+
+export const setSubMajors = (subMajors = []) => ({
+    type: types.SET_SUB_MAJORS,
+    subMajors
+})
+
+export const setTreeMajors = (treeMajors = []) => ({
+    type: types.SET_TREE_MAJORS,
+    treeMajors
+})
+
+export const setUniRecommend = (uniRecommend = []) => ({
+    type: types.SET_UNI_RECOMMEND,
+    uniRecommend
+})
+
+export const setTopUniRecommend = (topUniRecommend = []) => ({
+    type: types.SET_TOP_UNI_RECOMMEND,
+    topUniRecommend
+})
+
+export const setCities = (cities) => ({
+    type: types.SET_CITIES,
+    cities
+})
+
+export const setCity = (data = { id: 0, value: 'Tất cả' }, error = "") => ({
+    type: types.SET_CITY,
+    city: { data, error }
+})
+
+export const setTotalUniversities = (totalUniversities) => ({
+    type: types.SET_TOTAL_UNIVERSITIES,
+    totalUniversities
+})
+
 export const reset = () => ({
     type: types.RESET
+})
+
+export const resetFilter = () => ({
+    type: types.RESET_FILTER
 })
