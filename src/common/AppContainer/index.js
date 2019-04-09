@@ -78,8 +78,7 @@ class AppContainer extends Component<AppContainerProps> {
             drawerDataInside,
             refresher,
             sticker,
-            scroll,
-            tab
+            scroll
         } = this.props;
         children = <View
             style={[

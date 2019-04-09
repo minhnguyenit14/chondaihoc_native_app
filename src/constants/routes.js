@@ -11,6 +11,10 @@ export default ROUTES = {
         route: "UniSearch",
         header: "Tra cứu đại học"
     },
+    UNI_DETAIL: {
+        route: "UniDetail",
+        header: ""
+    },
     INTRO_TEST: {
         route: "IntroTest",
         header: "Trắc nghiệm"

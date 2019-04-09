@@ -12,7 +12,7 @@ export default vars = {
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 3,
-    textShadowOffset: { width: 1, height: 1 },
+    textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 5,
     //font
     appFont: "FontAwesome5_Regular",

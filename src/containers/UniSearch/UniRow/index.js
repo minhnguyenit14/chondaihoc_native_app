@@ -4,12 +4,17 @@ import { ViewStyles, vars, screenHeight, caculateAppMaxHeight, TextStyles } from
 import { Image, Text, Caption } from '../../../common';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { UNIVERSITY_LOGO_PATH } from '../../../../appConfig';
+import { ROUTES } from '../../../constants';
 
 class UniRow extends Component {
     constructor(props) {
         super(props);
         this.state = {};
     }
+    goToDetail = (data) => {
+        this.props.navigation.push(ROUTES.UNI_DETAIL.route, { data });
+    }
+
     render() {
         let { data, style } = this.props;
         let uri = UNIVERSITY_LOGO_PATH.replace('name', data.UniversityLogo);
@@ -22,6 +27,7 @@ class UniRow extends Component {
         return (
             <TouchableOpacity
                 style={[ViewStyles.flexDirectionRow, styles.container, style]}
+                onPress={() => this.goToDetail(data)}
             >
                 <View style={{ flex: .3, marginRight: vars.margin }}>
                     <Image

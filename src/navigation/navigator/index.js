@@ -9,8 +9,10 @@ import {
     Profile,
     Login,
     UniSearch,
+    UniDetail,
     SignUp,
     Blog,
+    BlogDetail,
     IntroTest,
     Test,
     TestResult,
@@ -42,7 +44,8 @@ const AuthStack = createStackNavigator(
 
 const UniSearchStack = createStackNavigator(
     {
-        UniSearch
+        UniSearch,
+        UniDetail
     },
     {
         initialRouteName: "UniSearch",
@@ -52,7 +55,8 @@ const UniSearchStack = createStackNavigator(
 
 const BlogStack = createStackNavigator(
     {
-        Blog
+        Blog,
+        BlogDetail
     },
     {
         initialRouteName: "Blog",
@@ -68,7 +72,8 @@ const TestStack = createStackNavigator(
         IntroTest,
         Test,
         TestResult,
-        UniRecommendFilter
+        UniRecommendFilter,
+        UniDetail
     },
     {
         initialRouteName: "IntroTest",
@@ -82,7 +87,8 @@ const TestStack = createStackNavigator(
 const ProfileStack = createStackNavigator(
     {
         Profile,
-        ProfileUniRecommendFilter
+        ProfileUniRecommendFilter,
+        UniDetail
     },
     {
         initialRouteName: "Profile",
@@ -109,7 +115,7 @@ const TabStack = createMaterialBottomTabNavigator(
         },
     },
     {
-        initialRouteName: 'Profile',
+        initialRouteName: 'UniSearch',
         swipeEnabled: true,
         animationEnabled: true,
         defaultNavigationOptions: ({ navigation, screenProps }) => (

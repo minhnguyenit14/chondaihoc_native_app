@@ -161,7 +161,6 @@ class Blog extends Component {
             this.props.searchAct(whereClause, 0, ROW_PER_PAGE, (data) => {
                 let d = JSON.parse(data);
                 let blogData = JSON.parse(d.data);
-                console.log(blogData)
                 let totalRecords = d.totalRecords;
                 this.props.navigation.setParams({
                     loading: false,
@@ -206,7 +205,6 @@ class Blog extends Component {
         let searchLoading = searchStatus === STATUS.loading;
         return (
             <AppContainer
-                tab={ROUTES.BLOG}
                 scroll={false}
                 refresher={<RefreshControl
                     onRefresh={() => this.onSearch(true)}

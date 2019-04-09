@@ -13,6 +13,7 @@ import DismissKeyboard from './DismissKeyboard';
 import RefreshControl from './RefreshControl';
 import ImageUpload from './ImageUpload';
 import NavigationEvents from './NavigationEvents';
+import Carousel from './Carousel';
 
 export {
    AppContainer,
@@ -29,5 +30,6 @@ export {
    DatePicker,
    RefreshControl,
    ImageUpload,
+   Carousel,
    NavigationEvents
 }

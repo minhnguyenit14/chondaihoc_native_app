@@ -4,6 +4,8 @@ import Profile from './Profile';
 import ProfileUniRecommendFilter from './Profile/ProfleUniRecommendFilter';
 import UniSearch from './UniSearch';
 import Blog from './Blog';
+import BlogDetail from './BlogDetail';
+import UniDetail from './UniDetail';
 import {
     IntroTest,
     Test,
@@ -15,8 +17,10 @@ export {
     Login,
     Profile,
     UniSearch,
+    UniDetail,
     SignUp,
     Blog,
+    BlogDetail,
     IntroTest,
     Test,
     TestResult,

@@ -17,6 +17,7 @@ import {
     resetEditForm,
     getTestResultByUserID
 } from '../../actions/profile';
+import { setGetResultStatus } from '../../actions/uniTest';
 import { setNextTab, setCurrentTab } from '../../actions/navigationEvents';
 import { NavigationEvents } from 'react-navigation';
 import { logOut } from '../../actions/logout';
@@ -112,7 +113,6 @@ class Profile extends Component {
                 }
             )
         }
-
     }
 
     _logout = () => {
@@ -183,8 +183,10 @@ class Profile extends Component {
 
     checkTested = () => {
         let { getResultStatus } = this.props.uniTest;
-        getResultStatus === STATUS.success &&
-            this.getTestResult();
+        getResultStatus === STATUS.success && (
+            this.getTestResult(),
+            this.props.setGetResultStatus(STATUS.default)
+        )
     }
 
     render() {
@@ -209,7 +211,6 @@ class Profile extends Component {
 
         return (
             <AppContainer
-                tab={ROUTES.PROFILE}
                 sticker={
                     <React.Fragment>
                         <Edit
@@ -223,7 +224,7 @@ class Profile extends Component {
                 }
             >
                 <NavigationEvents
-                    onDidFocus={this.checkTested}
+                    onWillFocus={this.checkTested}
                 />
                 <View style={{ width: '100%', flex: 1 }}>
                     <Avatar
@@ -345,8 +346,12 @@ const mapDispatchToProps = dispatch => {
         setNextTab: (nextTab) => {
             dispatch(setNextTab(nextTab))
         },
-        setCurrentTab: (currentTab) => dispatch(setCurrentTab(currentTab)),
-        getTestResultByUserID: (userID, callBackSuccess) => dispatch(getTestResultByUserID(userID, callBackSuccess))
+        setCurrentTab: (currentTab) =>
+            dispatch(setCurrentTab(currentTab)),
+        getTestResultByUserID: (userID, callBackSuccess) =>
+            dispatch(getTestResultByUserID(userID, callBackSuccess)),
+        setGetResultStatus: (status) =>
+            dispatch(setGetResultStatus(status))
     }
 }
 

@@ -41,11 +41,35 @@ const initState = {
     cities: [],
     checkedMajorsDefault: [],
     city: { data: "", error: "" },
-    setGetTestResultByUserIDStatus: STATUS.default
+    setGetTestResultByUserIDStatus: STATUS.default,
+    getUniDetailStatus: STATUS.default,
+    rangePoint: null,
+    majorsTable: [],
+    uniInfo: null
 }
 
 const profile = (state = initState, action) => {
     switch (action.type) {
+        case types.SET_GET_UNI_DETAIL_STATUS:
+            return {
+                ...state,
+                getUniDetailStatus: action.status
+            }
+        case types.SET_UNI_RANGE_POINT:
+            return {
+                ...state,
+                rangePoint: action.rangePoint
+            }
+        case types.SET_MAJORS_TABLE:
+            return {
+                ...state,
+                majorsTable: action.majorsTable
+            }
+        case types.SET_UNI_INFO:
+            return {
+                ...state,
+                uniInfo: action.uniInfo
+            }
         case types.SET_AVATAR:
             return {
                 ...state,

@@ -23,8 +23,8 @@ class BlogRow extends Component {
         return null;
     }
 
-    goToBlogDetail = (blogId) => {
-        this.props.navigation.push(ROUTES.BLOG_DETAIL, { blogId });
+    goToBlogDetail = (ArticleID, ArticleTitle) => {
+        this.props.navigation.push(ROUTES.BLOG_DETAIL.route, { data: { ArticleID, ArticleTitle } });
     }
 
     render() {
@@ -33,14 +33,17 @@ class BlogRow extends Component {
             ArticleTitle,
             CreatedDate,
             ArticleAuthor,
-            ArticleShortDescription
+            ArticleShortDescription,
+            ArticleID
         } = this.props.data;
         let uri = BLOG_THUMBNAIL_PATH.replace("name", ArticleImages);
-        console.log(uri, ArticleImages)
-
         let formatDate = this.formatDate(CreatedDate);
+
         return (
-            <TouchableOpacity style={[ViewStyles.flexDirectionRow, styles.container]}>
+            <TouchableOpacity
+                onPress={() => this.goToBlogDetail(ArticleID, ArticleTitle)}
+                style={[ViewStyles.flexDirectionRow, styles.container]}
+            >
                 <View style={[styles.imgContainer]}>
                     <Image
                         errorCaptionStyle={{ color: vars.white }}

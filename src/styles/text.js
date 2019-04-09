@@ -7,11 +7,11 @@ const AppBoldFont = "Lato, Lucida Grande, Tahoma, Sans-Serif";
 const TextStyles = StyleSheet.create({
     appFont: {
         fontFamily: vars.appFont,
-        lineHeight: vars.fontSizeStandard*1.3
+        lineHeight: vars.fontSizeStandard*1.5
     },
     boldFont: {
         fontFamily: vars.appBoldFont,
-        lineHeight: vars.fontSizeStandard*1.6
+        lineHeight: vars.fontSizeStandard*1.7
     },
 
     //=============

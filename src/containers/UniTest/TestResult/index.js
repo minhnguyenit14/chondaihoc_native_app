@@ -79,6 +79,7 @@ class TestResult extends Component {
         topUniRecommend.map(u => data.push(
             <UniRow
                 data={u}
+                navigation={this.props.navigation}
                 style={styles.uniRow}
                 key={u.UniversityID}
             />

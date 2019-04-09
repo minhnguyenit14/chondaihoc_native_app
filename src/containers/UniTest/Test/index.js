@@ -215,7 +215,6 @@ class Test extends Component {
 
         return (
             <AppContainer
-                tab={ROUTES.INTRO_TEST}
                 scroll={false}
                 scrollRef={inst => this.scrollView = inst}
                 refresher={

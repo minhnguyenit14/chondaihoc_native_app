@@ -15,7 +15,7 @@ import {
 
 const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const EMAIL_UNVALID = "Email không hợp lệ";
-const PASSWORD_LENGTH_VALID = "Độ dài mật khẩu ít nhất 6";
+const PASSWORD_LENGTH_VALID = "Mật khẩu phải có ít nhất 6 kí tự";
 const PASSWORD_COINCIDE = "Mật khẩu không khớp";
 const NAME_MSG_ERROR = "Tên không được để trống";
 

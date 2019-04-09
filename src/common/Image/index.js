@@ -41,13 +41,10 @@ class Image extends Component<ImageProps> {
 
     setStatus = (error = true, isLoading = false, type) => {
         // console.log(type)
-        if (this.state.error || error || this.state.isLoading) {
-            this.setState({
-                error,
-                isLoading
-            })
-        }
-
+        this.setState({
+            error,
+            isLoading
+        })
     }
 
     render() {
@@ -75,16 +72,18 @@ class Image extends Component<ImageProps> {
             </View>
             : <View></View>
 
-        loadingComponent = (isLoading || loading) ?
-            <View style={[
-                ViewStyles.container,
-                ViewStyles.flexCenter,
-                { position: 'absolute' },
-                loading && { zIndex: 999, backgroundColor: 'rgba(0,0,0,.6)' }
-            ]}>
-                <Loading size="large" />
-            </View>
-            : <View></View>
+        loadingComponent =
+            (isLoading || loading) ?
+                <View style={[
+                    ViewStyles.container,
+                    ViewStyles.flexCenter,
+                    { position: 'absolute' },
+                    (isLoading || loading) &&
+                    { zIndex: 999, backgroundColor: 'rgba(0,0,0,.6)' }
+                ]}>
+                    <Loading size="large" />
+                </View>
+                : <View></View>
 
         let img = source
             ? <Img
@@ -112,7 +111,7 @@ class Image extends Component<ImageProps> {
             );
         error && (img = status);
         return (
-            (lightbox && !error && !isLoading && !loading)
+            lightbox
                 ?
                 <LightBox
                     activeProps={
