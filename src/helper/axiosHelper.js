@@ -85,7 +85,23 @@ const handleRespond = (res, isImg = false) => {
                 })
 
         }
+    }).then((data) => {
+        if (data.data.Error) {
+
+            Alert.alert(
+                "Lỗi",
+                data.data.Message,
+                [
+                    {
+                        text: "OK",
+                    }
+                ],
+                { cancelable: true }
+            )
+        }
+        return data;
     })
+
 }
 
 const handleRej = (err) => {

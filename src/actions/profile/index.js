@@ -1,7 +1,6 @@
 import { API, STATUS } from '../../constants';
 import { post } from '../../helper/axiosHelper';
 import types from './types';
-import { Alert } from 'react-native';
 import { getFilterData } from '../uniTest';
 
 export const getDateFromString = (dateStr) => {
@@ -80,17 +79,6 @@ export const updateProfile = (profile, callBackSuccess) => {
         dispatch(setUpdateProfileStatus(STATUS.loading))
         post(url, body).then(res => {
             if (res.data.Error) {
-                Alert.alert(
-                    "Lỗi",
-                    res.data.Message,
-                    [
-                        {
-                            text: "OK",
-                            style: "cancel"
-                        }
-                    ],
-                    { cancelable: true }
-                )
                 dispatch(setUpdateProfileFormError(res.data.Message))
                 dispatch(setUpdateProfileStatus(STATUS.error))
             } else {
@@ -99,17 +87,6 @@ export const updateProfile = (profile, callBackSuccess) => {
                 callBackSuccess(res);
             }
         }).catch(error => {
-            Alert.alert(
-                "Lỗi",
-                error,
-                [
-                    {
-                        text: "OK",
-                        style: "cancel"
-                    }
-                ],
-                { cancelable: true }
-            )
             dispatch(setUpdateProfileStatus(STATUS.error))
         })
     };
@@ -121,17 +98,6 @@ export const uploadTempImage = (image, callBackSuccess) => {
         dispatch(setUploadTempImageStatus(STATUS.loading))
         post(url, image, true).then(res => {
             if (res.data.Error) {
-                Alert.alert(
-                    "Lỗi",
-                    res.data.Message,
-                    [
-                        {
-                            text: "OK",
-                            style: "cancel"
-                        }
-                    ],
-                    { cancelable: true }
-                )
                 dispatch(setUploadTempImageError(res.data.Message))
                 dispatch(setUploadTempImageStatus(STATUS.error))
             } else {
@@ -140,17 +106,6 @@ export const uploadTempImage = (image, callBackSuccess) => {
                 callBackSuccess(res.data);
             }
         }).catch(error => {
-            Alert.alert(
-                "Lỗi",
-                error,
-                [
-                    {
-                        text: "OK",
-                        style: "cancel"
-                    }
-                ],
-                { cancelable: true }
-            )
             dispatch(setUploadTempImageError(res.data.Message))
             dispatch(setUploadTempImageStatus(STATUS.error))
         })
@@ -169,47 +124,14 @@ export const uploadImage = (imageName, oldAvatarName, callBackSuccess) => {
         post(url, body).then(res => {
             console.log(res)
             if (res.data.Error) {
-                Alert.alert(
-                    "Lỗi",
-                    res.data.Message,
-                    [
-                        {
-                            text: "OK",
-                            style: "cancel"
-                        }
-                    ],
-                    { cancelable: true }
-                )
                 dispatch(setUploadImageError(res.data.Message))
                 dispatch(setUploadImageStatus(STATUS.error))
             } else {
                 dispatch(setUploadImageError())
                 dispatch(setUploadImageStatus(STATUS.success));
                 callBackSuccess();
-                Alert.alert(
-                    "Thành công!",
-                    "Bạn đã cập nhật ảnh đại diện thành công",
-                    [
-                        {
-                            text: "OK",
-                            style: "cancel"
-                        }
-                    ],
-                    { cancelable: true }
-                )
             }
         }).catch(error => {
-            Alert.alert(
-                "Lỗi",
-                error,
-                [
-                    {
-                        text: "OK",
-                        style: "cancel"
-                    }
-                ],
-                { cancelable: true }
-            )
             dispatch(setUploadImageError(res.data.Message))
             dispatch(setUploadImageStatus(STATUS.error))
         })
@@ -227,17 +149,6 @@ export const updatePassword = (userPassword, userNewPassword, userEmail, callBac
         dispatch(setUpdatePasswordStatus(STATUS.loading));
         post(url, body).then(res => {
             if (res.data.Error) {
-                Alert.alert(
-                    "Lỗi",
-                    res.data.Message,
-                    [
-                        {
-                            text: "OK",
-                            style: "cancel"
-                        }
-                    ],
-                    { cancelable: true }
-                )
                 dispatch(setUpdatePasswordFormError(res.data.Message))
                 dispatch(setUpdatePasswordStatus(STATUS.error))
             } else {
@@ -249,17 +160,6 @@ export const updatePassword = (userPassword, userNewPassword, userEmail, callBac
                 callBackSuccess()
             }
         }).catch(rej => {
-            Alert.alert(
-                "Lỗi",
-                rej,
-                [
-                    {
-                        text: "OK",
-                        style: "cancel"
-                    }
-                ],
-                { cancelable: true }
-            )
             dispatch(setUpdatePasswordFormError(rej))
             dispatch(setUpdatePasswordStatus(STATUS.error));
         });
@@ -275,47 +175,59 @@ export const getTestResultByUserID = (UserID, callBackSuccess) => {
         dispatch(setGetTestResultByUserIDStatus(STATUS.loading));
         post(url, body).then(res => {
             if (res.data.Error) {
-                Alert.alert(
-                    "Lỗi",
-                    res.data.Message,
-                    [
-                        {
-                            text: "OK",
-                            style: "cancel"
-                        }
-                    ],
-                    { cancelable: true }
-                )
                 dispatch(setGetTestResultByUserIDStatus(STATUS.error))
             } else {
                 let resultData = res.data.ResultData;
-                let { kindCode, data } = getFilterData(resultData.CharacterKind);
-                dispatch(setMainMajors(resultData.MainMajor));
-                dispatch(setSubMajors(resultData.SubMajor));
-                dispatch(setTreeMajors(resultData.TreeMajor));
-                dispatch(setTopUniRecommend(resultData.University));
-                dispatch(setResult(data));
-                dispatch(setTestMsg(resultData.TestMsg[0].TestMsg));
-                dispatch(setKindCode(kindCode));
+                if (Object.keys(resultData).length) {
+                    let { kindCode, data } = getFilterData(resultData.CharacterKind);
+                    dispatch(setMainMajors(resultData.MainMajor));
+                    dispatch(setSubMajors(resultData.SubMajor));
+                    dispatch(setTreeMajors(resultData.TreeMajor));
+                    dispatch(setTopUniRecommend(resultData.University));
+                    dispatch(setResult(data));
+                    dispatch(setTestMsg(resultData.TestMsg[0].TestMsg));
+                    dispatch(setKindCode(kindCode));
+                }
                 dispatch(setGetTestResultByUserIDStatus(STATUS.success))
                 callBackSuccess()
             }
         }).catch(rej => {
-            Alert.alert(
-                "Lỗi",
-                rej,
-                [
-                    {
-                        text: "OK",
-                        style: "cancel"
-                    }
-                ],
-                { cancelable: true }
-            )
             dispatch(setGetTestResultByUserIDStatus(STATUS.error));
         });
     }
 };
+
+export const checkVerified = (userID, callBackSuccess, callBackError = () => { }) => {
+    return dispatch => {
+        let body = {
+            userID
+        }
+        let url = API.CHECK_VERIFIED;
+        dispatch(setCheckVerifiedStatus(STATUS.loading))
+        post(url, body).then(
+            res => {
+                console.log(res)
+                if (res.data.Error) {
+                    dispatch(setCheckVerifiedStatus(STATUS.error))
+                    callBackError(res.data.Message)
+                } else {
+                    let data = JSON.parse(res.data.ResultData);
+                    dispatch(setCheckVerifiedStatus(STATUS.success))
+                    callBackSuccess(data.IsVerified);
+                }
+            },
+            rej => {
+                dispatch(setCheckVerifiedStatus(STATUS.error))
+            }
+        )
+    }
+}
+
+
+export const setCheckVerifiedStatus = (status) => ({
+    type: types.SET_CHECK_VERIFIED_STATUS,
+    status
+})
 
 export const setCheckedMajorsDefault = (checkedMajorsDefault = []) => ({
     type: types.SET_CHECKED_MAJORS_DEFAULT,

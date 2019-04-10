@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { ROUTES, STATUS } from '../../constants';
+import { StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { STATUS } from '../../constants';
 import { Button, AppContainer, Input, Heading, Text, Image } from '../../common';
 import { vars } from '../../styles';
 import { connect } from 'react-redux';
@@ -113,7 +113,18 @@ class SignUp extends Component {
             this.onChange("setFullName", fullName.data, chkfullname.msg);
         } else {
             this.props.signupAct(userEmail, userPassword, fullName, this.formatDate(userDOB), () => {
-                this.props.navigation.goBack();
+                Alert.alert(
+                    "Thành công!",
+                    "Bạn đã đăng ký thành công\nHãy kiểm tra email để xác thực tài khoản nhé",
+                    [
+                        {
+                            text: "Ok",
+                            onPress: () => this.props.navigation.goBack()
+                        }
+                    ],
+                    { cancelable: false }
+                )
+
             });
         }
     }

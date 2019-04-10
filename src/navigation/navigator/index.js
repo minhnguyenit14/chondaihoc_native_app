@@ -20,14 +20,16 @@ import {
     ProfileUniRecommendFilter
 } from '../../containers';
 import { getHeaderName } from '../../helper/routeNameTranslator';
-import { Avatar } from 'react-native-elements';
+import { Avatar, Badge } from 'react-native-elements';
+import { View } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
-import { fromLeft, fromBottom } from 'react-navigation-transitions';
+import { fromLeft } from 'react-navigation-transitions';
 import { ROUTES } from '../../constants';
 import { vars } from '../../styles';
 import CheckAuthScreen from './CheckAuthScreen';
-import { Heading, NavigationEvents } from '../../common';
+import { Heading } from '../../common';
 import * as Animatable from 'react-native-animatable';
+import { getStorage } from '../../helper/axiosHelper';
 
 const AuthStack = createStackNavigator(
     {
@@ -111,64 +113,59 @@ const TabStack = createMaterialBottomTabNavigator(
             screen: BlogStack
         },
         Profile: {
-            screen: ProfileStack
+            screen: ProfileStack,
         },
     },
     {
-        initialRouteName: 'UniSearch',
+        initialRouteName: 'IntroTest',
         swipeEnabled: true,
         animationEnabled: true,
-        defaultNavigationOptions: ({ navigation, screenProps }) => (
-            {
-                tabBarLabel:
-                    // navigation.state.routeName === ROUTES.PROFILE.route
-                    //     ? screenProps.UserFullName
-                    //     : 
-                    getHeaderName(navigation.state.routeName),
-                tabBarColor: vars.orange,
-                tabBarIcon: ({ focused, horizontal, tintColor }) => {
-                    const { routeName } = navigation.state;
-                    let iconName;
-                    let avatar = null;
-                    let size = 25;
-                    switch (routeName) {
-                        case ROUTES.INTRO_TEST.route:
-                            iconName = "clipboard-list";
-                            break;
-                        case ROUTES.UNI_SEARCH.route:
-                            iconName = "search";
-                            break;
-                        case ROUTES.BLOG.route:
-                            iconName = "blog";
-                            break;
-                        case ROUTES.PROFILE.route:
-                            iconName = "user-alt";
-                            // let data = screenProps;
-                            // let userFullName = "";
-                            // data.UserFullName.split(" ").map(c => userFullName += c.charAt(0).toUpperCase());
-                            // avatar = <Avatar
-                            //     title={userFullName}
-                            //     titleStyle={{
-                            //         color: vars.textMain,
-                            //         fontSize: vars.fontSizeStandard,
-                            //         fontFamily: vars.appFont,
-                            //     }}
-                            //     avatarStyle={{ backgroundColor: '#000' }}
-                            //     rounded
-                            //     size={size}
-                            //     source={require('../../assets/uni_logo/fpt.png')}
-                            // />
-                            break;
-                    }
-                    return avatar || <Icon name={iconName} size={size} color={tintColor} />;
-                },
-                barStyle: {
-                    borderTopWidth: 1,
-                    borderColor: vars.primaryHover,
-                    backgroundColor: vars.white,
-                    paddingTop: 0,
+        defaultNavigationOptions: ({ navigation, screenProps }) => ({
+            tabBarLabel: getHeaderName(navigation.state.routeName),
+            tabBarColor: vars.orange,
+            tabBarIcon: ({ focused, horizontal, tintColor }) => {
+                const { routeName } = navigation.state;
+                let iconName;
+                let avatar = null;
+                let size = 25;
+                switch (routeName) {
+                    case ROUTES.INTRO_TEST.route:
+                        iconName = "clipboard-list";
+                        break;
+                    case ROUTES.UNI_SEARCH.route:
+                        iconName = "search";
+                        break;
+                    case ROUTES.BLOG.route:
+                        iconName = "blog";
+                        break;
+                    case ROUTES.PROFILE.route:
+                        iconName = "user-alt";
+                        let { isVerified } = screenProps;
+                        avatar = !isVerified && <View>
+                            <Icon name={iconName} size={size} color={tintColor} />
+                            <Animatable.View
+                                useNativeDriver
+                                animation="bounce"
+                                style={{ position: 'absolute', top: -4, right: -12 }}
+                            >
+                                <Badge
+                                    status="error"
+                                    value="!"
+                                />
+                            </Animatable.View>
+
+                        </View>
+                        break;
                 }
-            }),
+                return avatar || <Icon name={iconName} size={size} color={tintColor} />;
+            },
+            barStyle: {
+                borderTopWidth: 1,
+                borderColor: vars.primaryHover,
+                backgroundColor: vars.white,
+                paddingTop: 0,
+            }
+        }),
         activeColor: vars.white,
         inactiveColor: '#000000a1',
     }

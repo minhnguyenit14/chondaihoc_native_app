@@ -2,17 +2,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getBlogDetail } from '../../actions/blogDetail'
 import { RefreshControl, StyleSheet, View } from 'react-native';
-import { AppContainer, Heading, Caption } from '../../common';
+import { AppContainer, Heading, Caption, Image } from '../../common';
 import { STATUS } from '../../constants';
-import { TextStyles, vars } from '../../styles';
+import { TextStyles, vars, screenWidth } from '../../styles';
 import HTML from 'react-native-render-html';
+import { ADMIN_URL } from '../../../appConfig';
 
 class BlogDetail extends Component {
-    static navigationOptions = ({ navigation }) => {
-        return {
-            header: null
-        }
-    }
+    // static navigationOptions = ({ navigation }) => {
+    //     return {
+    //         headerTitle: 
+    //     }
+    // }
 
     constructor(props) {
         super(props);
@@ -34,8 +35,9 @@ class BlogDetail extends Component {
         let { ArticleID } = this.props.navigation.getParam("data", 0);
         this.props.getBlogDetail(ArticleID, (status, data = null) => {
             if (data) {
+                data.ArticleContent = data.ArticleContent.replace(/\/Images/g, ADMIN_URL + '/Images/');
                 this.setState({
-                    ...data
+                    ...data,
                 })
             }
             this.setState({
@@ -47,8 +49,6 @@ class BlogDetail extends Component {
     render() {
         let {
             ArticleTitle,
-            ArticleShortDescription,
-            ArticleImages,
             ArticleContent,
             ArticleAuthor,
             createDate,
@@ -78,11 +78,12 @@ class BlogDetail extends Component {
                 {ArticleContent !== "" && <HTML
                     tagsStyles={{
                         span: {
-                            backgroundColor: 'transparent',
-                            // color: vars.textMain
+                            backgroundColor: 'transparent'
                         },
+                        img: {
+                            maxWidth: screenWidth - vars.padding * 2
+                        }
                     }}
-                    textSelectable
                     baseFontStyle={TextStyles.appFont}
                     onLinkPress={(e, href) => this.linking(href)}
                     html={ArticleContent}
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: vars.fontLightBold,
-
+        marginBottom: vars.margin / 2
     }
 })
 

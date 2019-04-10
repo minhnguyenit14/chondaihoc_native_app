@@ -8,7 +8,7 @@ export const signupAct = (userEmail, userPassword, fullName, userDOB, callbackSu
             masterData: JSON.stringify({
                 UserPassword: userPassword.data,
                 UserFullName: fullName.data,
-                UserEmail: userEmail.data,
+                UserEmail: userEmail.data.toLowerCase(),
                 UserDOB: userDOB.data
             })
         }

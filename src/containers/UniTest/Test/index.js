@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { AppContainer, NavigationEvents } from '../../../common';
+import { AppContainer,  } from '../../../common';
+import {NavigationEvents} from 'react-navigation';
 import { ROUTES, STATUS } from '../../../constants';
 import {
     View,
@@ -21,7 +22,8 @@ import {
     setPagesAnswered,
     getQuestions,
     reset,
-    setTestProgress
+    setTestProgress,
+    setTotalAnswered
 } from '../../../actions/uniTest';
 import { setNextTab, setCurrentTab } from '../../../actions/navigationEvents';
 import Question from './Question';
@@ -29,7 +31,7 @@ import * as Animatable from 'react-native-animatable';
 
 class Test extends Component {
     static navigationOptions = ({ navigation }) => {
-        let disabled = navigation.getParam('disabled', false);
+        let disabled = navigation.getParam('disabled', true);
         return {
             headerTitle: ROUTES.TEST.header,
             headerRight: (
@@ -65,26 +67,35 @@ class Test extends Component {
     };
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            isFullAnswerToActiveProgress: false
+        };
     }
 
     componentDidMount() {
-        let { totalQuestions, totalAnswered } = this.props.uniTest;
-        this.props.navigation.setParams({
-            disabled: (totalAnswered === totalQuestions && totalQuestions !== 0) ? false : true,
-            submit: this._submit,
-            auto: this.auto
-        });
-
+        this.checkSubmit()
         this.getData();
     }
 
-    // componentWillUnmount() {
-    //     let { result } = this.props.uniTest;
-    //     if (result.length !== 0) {
-    //         this.props.reset()
-    //     }
-    // }
+    checkSubmit= () => {
+        let { totalQuestions, totalAnswered } = this.props.uniTest;
+        let disabled = (totalAnswered === totalQuestions && totalQuestions !== 0) ? false : true
+        this.props.navigation.setParams({
+            disabled,
+            submit: this._submit,
+            auto: this.auto
+        });
+        this.setState({
+            isFullAnswerToActiveProgress: !disabled
+        })
+    }
+
+    componentWillUnmount() {
+        let { result } = this.props.uniTest;
+        if (result.length !== 0) {
+            this.props.reset()
+        }
+    }
 
     getData = () => {
         let { questions } = this.props.uniTest;
@@ -105,7 +116,6 @@ class Test extends Component {
         let minID = options[0].OptionID;
         let maxID = options[options.length - 1].OptionID;
         let temp = [];
-
         questions.map(q => {
             let autoTemp = [];
             temp.push(q.pageIndex);
@@ -122,6 +132,7 @@ class Test extends Component {
             auto.push({ data: autoTemp });
         })
         this.props.setAnswers(auto);
+        this.props.setTotalAnswered(totalQuestions)
         this.props.setTestProgress(100);
         this.props.setPagesAnswered(temp);
         this.props.navigation.setParams({
@@ -203,6 +214,9 @@ class Test extends Component {
 
     render() {
         let {
+            isFullAnswerToActiveProgress
+        } = this.state;
+        let {
             questions,
             pageIndex,
             testProgress,
@@ -233,7 +247,7 @@ class Test extends Component {
                                 value={testProgress}
                                 maxValue={100}
                                 barEasing='bounce'
-                                backgroundColor={vars.orange}
+                                backgroundColor={isFullAnswerToActiveProgress?vars.green :vars.orange}
                                 backgroundColorOnComplete={vars.green}
                             />
                             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -242,6 +256,7 @@ class Test extends Component {
                         </View>
                 }
             >
+            <NavigationEvents onWillFocus={this.checkSubmit}/>
                 {loadingQ ||
                     <FlatList
                         data={questions}
@@ -303,6 +318,7 @@ const mapDispatchToProps = dispatch => {
             dispatch(setNextTab(nextTab))
         },
         setCurrentTab: (currentTab) => dispatch(setCurrentTab(currentTab)),
+        setTotalAnswered: (totalAnswered) => dispatch(setTotalAnswered(totalAnswered)),
 
     }
 }

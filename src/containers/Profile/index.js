@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { View, TouchableOpacity, Alert } from 'react-native';
+import { View, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import { STATUS, ROUTES } from '../../constants';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
-import { StyleSheet } from 'react-native';
-import { AppContainer, Loading } from '../../common';
-import { getStorage } from '../../helper/axiosHelper';
+import { Icon as Icon4 } from 'react-native-elements';
+import { AppContainer, Loading, FeedBack, Heading, Text } from '../../common';
+import { getStorage, setStorage } from '../../helper/axiosHelper';
 import { AVATAR_PATH } from '../../../appConfig';
-import { vars, screenHeight } from '../../styles';
+import { vars, screenHeight, ViewStyles } from '../../styles';
 import { connect } from 'react-redux';
 import {
     getProfile,
@@ -15,7 +15,8 @@ import {
     updateProfile,
     setAvatar,
     resetEditForm,
-    getTestResultByUserID
+    getTestResultByUserID,
+    checkVerified
 } from '../../actions/profile';
 import { setGetResultStatus } from '../../actions/uniTest';
 import { setNextTab, setCurrentTab } from '../../actions/navigationEvents';
@@ -30,7 +31,27 @@ const EDIT_MODE = 'Edit';
 
 class Profile extends Component {
     static navigationOptions = ({ navigation }) => {
+        let isVerified = navigation.getParam("isVerified", null);
         return {
+            headerTitle: (<View style={[ViewStyles.flexDirectionRow, { marginLeft: vars.margin }]}>
+                <Heading>{ROUTES.PROFILE.header}</Heading>
+                {isVerified !== null && <View style={[
+                    ViewStyles.flexCenterVertical,
+                    {
+                        marginLeft: isVerified ? 0 : 10,
+                        paddingHorizontal: vars.padding / 2,
+                        borderRadius: 4,
+                        backgroundColor: isVerified ? 'transparent' : vars.red
+                    }
+                ]}>
+                    {isVerified
+                        ?
+                        <Icon4 name="check-circle" size={vars.fontSizeLarge} color={vars.green} />
+                        : <Text style={{ color: vars.white }}>
+                            Chưa xác thực email
+                    </Text>}
+                </View>}
+            </View>),
             headerRight: (
                 <TouchableOpacity
                     style={{ paddingHorizontal: vars.padding }}
@@ -57,11 +78,19 @@ class Profile extends Component {
         this.state = {
             avatarUrl: '',
             isEdit: false,
-            changePass: false
+            changePass: false,
+            feedBack: false,
+            isVerified: null
         };
     }
 
     componentDidMount() {
+        getStorage().then(storage => {
+            this.props.navigation.setParams({ isVerified: storage.isVerified });
+            this.setState({
+                isVerified: storage.isVerified
+            })
+        })
         this.props.navigation.setParams({
             logout: this._logout
         });
@@ -72,11 +101,11 @@ class Profile extends Component {
         if (userID) {
             this.props.getProfile(userID, (data) => {
                 let {
-                    userAvatar,
+                    userAvatar
                     // userFullName
                 } = data;
                 this.setState({
-                    avatarUrl: AVATAR_PATH.replace("name", userAvatar),
+                    avatarUrl: userAvatar === null ? null :AVATAR_PATH.replace("name", userAvatar)
                     // userFullName
                 });
             });
@@ -87,11 +116,11 @@ class Profile extends Component {
                     let userID = storage.userID || this.props.login.userID;
                     this.props.getProfile(userID, (data) => {
                         let {
-                            userAvatar,
+                            userAvatar
                             // userFullName
                         } = data;
                         this.setState({
-                            avatarUrl: AVATAR_PATH.replace("name", userAvatar),
+                            avatarUrl: userAvatar === null ? null :AVATAR_PATH.replace("name", userAvatar),
                             userAvatar
                             // userFullName
                         });
@@ -171,13 +200,18 @@ class Profile extends Component {
     onUpdateSuccess = (userID) => {
         this.setState({
             isEdit: false,
-            changePass: false
+            changePass: false,
+            feedBack: false
         })
         this.getProfile(userID);
     }
 
     closeEdit = () => {
-        this.setState({ isEdit: false, changePass: false });
+        this.setState({
+            isEdit: false,
+            changePass: false,
+            feedBack: false
+        });
         this.props.resetEditForm();
     }
 
@@ -189,11 +223,70 @@ class Profile extends Component {
         )
     }
 
+    checkVerified = () => {
+        getStorage().then(
+            storage => {
+                this.props.checkVerified(storage.userID, (isVerified) => {
+                    this.props.navigation.setParams({ isVerified });
+                    this.setState({
+                        isVerified
+                    })
+                    if (isVerified) {
+                        Alert.alert(
+                            "Thành công!",
+                            "Tài khoản của bạn đã được xác thực",
+                            [
+                                {
+                                    text: "Ok"
+                                }
+                            ]
+                        )
+                    } else {
+                        Alert.alert(
+                            "Chưa xác thực!",
+                            "Tài khoản của bạn chưa thực hiện xác thực email, bạn vui lòng kiểm tra email và xác thực",
+                            [
+                                {
+                                    text: "Ok"
+                                }
+                            ]
+                        )
+                    }
+                    this.props.navigation.navigate('App', { data: { isVerified } });
+                    setStorage({
+                        ...storage,
+                        isVerified
+                    })
+                })
+            }
+        )
+    }
+
+    reCheckVerified = () => {
+        Alert.alert(
+            "Chú ý!",
+            "Tài khoản của bạn chưa được xác thực, ấn Xác thực để kiểm tra nếu bạn đã xác thực",
+            [
+                {
+                    text: "Hủy",
+                    style: "cancel"
+                },
+                {
+                    text: "Xác thực",
+                    onPress: this.checkVerified
+                }
+
+            ],
+            { cancelable: true }
+        )
+    }
+
     render() {
         let {
             avatarUrl,
             isEdit,
-            changePass
+            changePass,
+            feedBack
         } = this.state;
         let {
             userFullName,
@@ -202,12 +295,17 @@ class Profile extends Component {
             uploadTempImageStatus,
             uploadImageStatus,
             updateProfileStatus,
-            getTestResultByUserIDStatus
+            getTestResultByUserIDStatus,
+            checkVerifiedStatus
         } = this.props.profile;
         let loading = getProfileStatus === STATUS.loading || updateProfileStatus === STATUS.loading;
         let getTestLoading = getTestResultByUserIDStatus === STATUS.loading && <Loading dot />;
         let color = loading ? vars.borderColorDarker : vars.primaryHover;
-        let avaLoading = uploadTempImageStatus === STATUS.loading || uploadImageStatus === STATUS.loading;
+        let avaLoading = uploadTempImageStatus === STATUS.loading || uploadImageStatus === STATUS.loading || getProfileStatus === STATUS.loading;
+        let checkVerifiedLoading = checkVerifiedStatus === STATUS.loading
+            && <View style={[styles.iconCheckVerified, { right: 5 }]}>
+                <Loading />
+            </View>
 
         return (
             <AppContainer
@@ -217,6 +315,11 @@ class Profile extends Component {
                             onUpdateSuccess={this.onUpdateSuccess}
                             changePass={changePass}
                             visible={isEdit || changePass}
+                            onRequestClose={this.closeEdit}
+                        />
+                        <FeedBack
+                            onUpdateSuccess={this.closeEdit}
+                            visible={feedBack}
                             onRequestClose={this.closeEdit}
                         />
                         <View style={styles.sticker} />
@@ -235,6 +338,34 @@ class Profile extends Component {
                         userDOB={userDOB}
                         onSuccess={this.uploadTempImage}
                     />
+                    < View style={[styles.editContainer, styles.feedback]}>
+                        <TouchableOpacity
+                            onPress={() => this.setState({ feedBack: true })}
+                        >
+                            <View style={styles.edit} />
+                            <View style={[styles.icon, styles.iconFeedBack]}>
+                                <Icon4
+                                    name="star"
+                                    color={color}
+                                    size={vars.fontSizeStandard * 2}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    {!this.state.isVerified && this.state.isVerified !== null && < View style={[styles.changePass, styles.checkVerified]}>
+                        <TouchableOpacity
+                            disabled={loading}
+                            onPress={this.reCheckVerified}
+                        >
+                            <View style={styles.edit} />
+                            {checkVerifiedLoading || <Icon
+                                style={[styles.iconCheckVerified]}
+                                name="user-times"
+                                color={vars.red}
+                                size={vars.fontSizeStandard}
+                            />}
+                        </TouchableOpacity>
+                    </View>}
                     < View style={styles.editContainer}>
                         <TouchableOpacity
                             disabled={loading}
@@ -309,7 +440,24 @@ const styles = StyleSheet.create({
         left: vars.padding,
         justifyContent: 'center',
         alignItems: 'center'
-    }
+    },
+    feedback: {
+        right: undefined,
+    },
+    iconFeedBack: {
+        left: vars.padding / 2,
+        bottom: vars.padding
+    },
+    checkVerified: {
+        right: undefined,
+    },
+    iconCheckVerified: {
+        position: 'absolute',
+        left: 5,
+        top: 5,
+        bottom: 0,
+        right: 0
+    },
 })
 
 const mapStateToProps = state => {
@@ -351,7 +499,9 @@ const mapDispatchToProps = dispatch => {
         getTestResultByUserID: (userID, callBackSuccess) =>
             dispatch(getTestResultByUserID(userID, callBackSuccess)),
         setGetResultStatus: (status) =>
-            dispatch(setGetResultStatus(status))
+            dispatch(setGetResultStatus(status)),
+        checkVerified: (userID, callBackSuccess, callBackError) =>
+            dispatch(checkVerified(userID, callBackSuccess, callBackError))
     }
 }
 

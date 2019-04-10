@@ -20,7 +20,8 @@ type AppContainerProps = {
     sticker?: React.Node,
     scroll?: Boolean,
     scrollRef?: Function,
-    appAnimate?: Function
+    appAnimate?: Function,
+    containerStyle?: Object | Array
 }
 const keyboardDismissMode = Platform.OS === "ios" ? { keyboardDismissMode: "on-drag" } : { onScrollEndDrag: Keyboard.dismiss };
 const ANIMATION_TAB_CHANGE_TIME = 250;
@@ -78,7 +79,8 @@ class AppContainer extends Component<AppContainerProps> {
             drawerDataInside,
             refresher,
             sticker,
-            scroll
+            scroll,
+            containerStyle
         } = this.props;
         children = <View
             style={[
@@ -135,7 +137,7 @@ class AppContainer extends Component<AppContainerProps> {
         return (
             <Animatable.View
                 useNativeDriver
-                style={styles.container}
+                style={[styles.container, containerStyle]}
                 ref={inst => { this.appAnimate = inst; this.props.appAnimate(inst) }}
             >
                 <NE
@@ -174,6 +176,7 @@ const styles = StyleSheet.create({
 AppContainer.propTypes = {
     children: PropTypes.any,
     style: PropTypes.oneOf(PropTypes.object, PropTypes.array),
+    containerStyle: PropTypes.oneOf(PropTypes.object, PropTypes.array),
     showDrawer: PropTypes.bool,
     drawerDataInside: PropTypes.any,
     refresher: PropTypes.element,
@@ -186,6 +189,7 @@ AppContainer.propTypes = {
 AppContainer.defaultProps = {
     children: null,
     style: null,
+    containerStyle: null,
     showDrawer: false,
     drawerDataInside: null,
     refresher: null,

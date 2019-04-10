@@ -1,25 +1,57 @@
 import React, { Component } from 'react';
 import { Button, AppContainer, Text, Title, Image } from '../../../common';
-import { View, StyleSheet } from 'react-native';
-import { vars, TextStyles, ViewStyles } from '../../../styles';
+import { View, StyleSheet, Alert } from 'react-native';
+import { vars, ViewStyles } from '../../../styles';
 import { ROUTES } from '../../../constants';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
+import { NavigationEvents } from 'react-navigation';
 import { setNextTab, setCurrentTab } from '../../../actions/navigationEvents';
+import { getStorage } from '../../../helper/axiosHelper';
 
 class IntroTest extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            isVerified: false
+        };
         this.appAnimate = null;
     }
 
-    goToTest = () => {
-        this.props.navigation.push(ROUTES.TEST.route);
+    checkVerified = () => {
+        getStorage().then(
+            storage => {
+                let { isVerified } = storage;
+                this.setState({
+                    isVerified
+                })
+            }
+        )
     }
+
+    goToTest = () => {
+        if (!this.state.isVerified) {
+            Alert.alert(
+                "Chú ý!",
+                "Bạn chưa xác thực email, vui lòng kiểm tra email và xác thực để làm bài kiểm tra này",
+                [
+                    {
+                        text: 'Ok',
+                    },
+                ],
+                { cancelable: true }
+            )
+        } else {
+            this.props.navigation.push(ROUTES.TEST.route);
+
+        }
+    }
+
     render() {
+        const title = "Làm trắc nghiệm";
         return (
-            <AppContainer tab={ROUTES.INTRO_TEST}>
+            <AppContainer>
+                <NavigationEvents onDidFocus={this.checkVerified} />
                 <Image source={require('../../../assets/logo/logo_horizontal.png')} />
                 <View style={[ViewStyles.flexCenter, styles.title]}>
                     <View style={styles.title_ctn}>
@@ -62,7 +94,7 @@ class IntroTest extends Component {
                 </View>
                 <Button
                     style={[styles.btn]}
-                    title="Làm trắc nghiệm"
+                    title={title}
                     onPress={this.goToTest}
                 />
             </AppContainer>

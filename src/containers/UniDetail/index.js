@@ -272,7 +272,7 @@ class UniDetail extends Component {
                         {
                             universityShortDescription &&
                             <View style={[styles.block, styles.shortDes]}>
-                                <Caption selectable>
+                                <Caption>
                                     {universityShortDescription}
                                 </Caption>
                             </View>
@@ -288,7 +288,6 @@ class UniDetail extends Component {
                                             // color: vars.textMain
                                         },
                                     }}
-                                    textSelectable
                                     baseFontStyle={TextStyles.appFont}
                                     onLinkPress={(e, href) => this.linking(href)}
                                     html={UniversityLongDescription} />

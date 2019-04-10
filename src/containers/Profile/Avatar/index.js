@@ -40,13 +40,22 @@ class Avatar extends PureComponent {
             <View style={[ViewStyles.flexCenterHorrizontal]}>
                 <View style={{ position: 'relative' }}>
                     <View style={[styles.imgContainer]}>
-                        <Image
-                            loading={avatarLoading}
-                            lightbox
-                            style={[ViewStyles.container]}
-                            uri={image || avatarUrl}
-                            resizeMode="cover"
-                        />
+                        {avatarUrl === null ?
+                            <View style={avatarUrl === null && [ViewStyles.flexCenter, styles.iconDefault]}>
+                                <Icon
+                                    name="user"
+                                    color={vars.textSecondary}
+                                    size={100}
+                                />
+                            </View>
+
+                            : <Image
+                                loading={avatarLoading}
+                                lightbox
+                                style={[ViewStyles.container]}
+                                uri={image || avatarUrl}
+                                resizeMode="cover"
+                            />}
                     </View>
                     <ImageUpload
                         customSelector={
@@ -91,7 +100,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     name: {
-        fontSize: vars.fontSizeStandard * 2,
+        fontSize: vars.fontSizeLarge,
         lineHeight: vars.fontSizeStandard * 2,
         marginBottom: vars.margin / 3
     },
@@ -106,6 +115,9 @@ const styles = StyleSheet.create({
         maxHeight: 300,
         overflow: 'hidden',
         marginVertical: vars.margin
+    },
+    iconDefault: {
+        height: '100%'
     },
     btn: {
         backgroundColor: vars.white,

@@ -6,7 +6,7 @@ import { logOut } from '../logout';
 export const loginAct = (userEmail, userPassword, callBackSuccess) => {
     return dispatch => {
         let body = {
-            userEmail: userEmail.data,
+            userEmail: userEmail.data.toLowerCase(),
             userPassword: userPassword.data,
         }
         let url = API.LOG_IN;
@@ -21,12 +21,6 @@ export const loginAct = (userEmail, userPassword, callBackSuccess) => {
                     let data = JSON.parse(res.data.ResultData);
                     console.log(data);
                     dispatch(logOut());
-                    dispatch(setLoginStatus(STATUS.success))
-                    dispatch(setUser(
-                        data.UserID,
-                        data.UserEmail,
-                        data.UserFullName,
-                    ))
                     dispatch(setStorage(
                         data.UserID,
                         data.UserToken,
@@ -35,6 +29,12 @@ export const loginAct = (userEmail, userPassword, callBackSuccess) => {
                         data.IsVerified,
                         data.UserAvatar
                     ))
+                    dispatch(setUser(
+                        data.UserID,
+                        data.UserEmail,
+                        data.UserFullName,
+                    ))
+                    dispatch(setLoginStatus(STATUS.success))
                     callBackSuccess(data);
                 }
             },

@@ -13,13 +13,15 @@ class Question extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: null
+            value: null,
+            isAnswered: false
         };
     }
 
     onChange = (value) => {
         this.setState({
-            value
+            value,
+            isAnswered: true,
         })
     }
 
@@ -27,26 +29,21 @@ class Question extends Component {
         let { value } = this.state;
         let { data } = this.props;
         let { answers, options, pageIndex, totalAnswered, totalQuestions } = this.props.uniTest;
-        let isExisted = false;
         let tempTotal = totalAnswered;
-        let selectedOpt = options.filter(o => o.OptionPoint === value);
 
-        answers[pageIndex - 1].data.forEach(a => {
-            if (a.QuestionID === data.QuestionID) {
-                a.value = value;
-                isExisted = true;
-            }
-        });
-        isExisted || (totalAnswered++ , answers[pageIndex - 1].data.push({
-            QuestionID: data.QuestionID,
-            QuestionSetID: data.QuestionSetID,
-            CharacterKindID: data.CharacterKindID,
-            OptionID: selectedOpt[0].OptionID,
-            value
-        }))
+        let temp = answers[pageIndex - 1].data.filter(a => a.QuestionID === data.QuestionID)[0];
+        temp ?
+            temp.value = value
+            : (tempTotal++ , answers[pageIndex - 1].data.push({
+                QuestionID: data.QuestionID,
+                QuestionSetID: data.QuestionSetID,
+                CharacterKindID: data.CharacterKindID,
+                OptionID: options.filter(o => o.OptionPoint === value)[0].OptionID,
+                value
+            }))
 
         if (tempTotal !== totalAnswered) {
-            this.setProgress(totalAnswered);
+            this.setProgress(tempTotal);
         }
         this.props.setAnswers(answers);
         this.setPagesAnswered();
@@ -78,15 +75,18 @@ class Question extends Component {
     }
 
     getAnsInfo = (answers, qID) => {
-        let isAnswered = false;
         let value = null;
         answers.map(a => {
             if (a.QuestionID === qID) {
-                isAnswered = true;
-                value = a.value
+                value = a.value;
+                if(!this.state.isAnswered){
+                    this.setState({
+                    isAnswered: true
+                    })
+                }
             };
         });
-        return [isAnswered, value];
+        return value;
     }
 
     render() {
@@ -94,11 +94,14 @@ class Question extends Component {
             data,
             number
         } = this.props;
+        let {
+            value,
+            isAnswered
+        } = this.state;
         let { answers, options, pageIndex, getResultStatus } = this.props.uniTest;
         let disabled = getResultStatus === STATUS.loading;
         let ansInfo = this.getAnsInfo(answers[pageIndex - 1].data, data.QuestionID);
-        let isAnswered = ansInfo[0];
-        let value = this.state.value || ansInfo[1];
+        value = value || ansInfo;
         let step = 1;
         const min = options[0].OptionPoint;
         const max = options[options.length - 1].OptionPoint;

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { AppContainer, Title, Caption, Button } from '../../../common';
+import { AppContainer, Title, Caption, Button, FeedBack } from '../../../common';
 import { View, StyleSheet } from 'react-native';
 import { ROUTES } from '../../../constants';
 import { connect } from 'react-redux';
@@ -19,7 +19,17 @@ class TestResult extends Component {
     };
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            showFeedBack: false
+        };
+    }
+
+    componentDidMount() {
+        if (this.props.navigation.state.routeName !== ROUTES.PROFILE.route) {
+            setTimeout(() => this.setState({
+                showFeedBack: true
+            }), 2000)
+        }
     }
 
     renderKinds = (result) => {
@@ -111,7 +121,16 @@ class TestResult extends Component {
         topUniRecommend = this.renderUniRecommend(topUniRecommend);
         let uniLength = topUniRecommend.length;
         return (
-            <AppContainer>
+            <AppContainer
+                containerStyle={{
+                    backgroundColor: 'rgba(0,0,0,0)',
+                }}
+            >
+                <FeedBack
+                    visible={this.state.showFeedBack}
+                    onRequestClose={() => this.setState({ showFeedBack: false })}
+                    onFeedBackSuccess={() => this.setState({ showFeedBack: false })}
+                />
                 {
                     kinds.length !== 0 &&
                     <React.Fragment>

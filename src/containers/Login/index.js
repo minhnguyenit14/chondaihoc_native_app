@@ -10,6 +10,7 @@ import {
     setPassword,
     setFormError
 } from '../../actions/login';
+import ForgotPass from './ForgotPass';
 
 class Login extends Component {
     constructor(props) {
@@ -17,14 +18,15 @@ class Login extends Component {
         this.state = {
             value: "",
             error: "",
-            loading: false
+            loading: false,
+            forgotPass: false
         };
     }
 
     login = () => {
         let { userEmail, userPassword } = this.props.login;
         this.props.loginAct(userEmail, userPassword, (data) => {
-            this.props.navigation.navigate('App');
+            setTimeout(() => this.props.navigation.navigate('App', { data: { isVerified: data.IsVerified } }), 100);
         })
     }
 
@@ -51,6 +53,10 @@ class Login extends Component {
         </Caption>
         return (
             <AppContainer style={styles.container}>
+                <ForgotPass
+                    onRequestClose={() => this.setState({ forgotPass: false })}
+                    visible={this.state.forgotPass}
+                />
                 <Image source={require('../../assets/logo/logo.png')} />
                 <Heading style={styles.heading}>
                     Đăng nhập
@@ -99,7 +105,7 @@ class Login extends Component {
                             top: 20,
                             bottom: 20
                         }}
-                        onPress={() => { }}
+                        onPress={() => this.setState({ forgotPass: true })}
                     >
                         <Text style={styles.text}>
                             Quên mật khẩu

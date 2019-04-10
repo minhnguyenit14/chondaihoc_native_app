@@ -22,4 +22,6 @@ export default API = {
     GET_RESULT_BY_USER_ID: `${BACKEND_URL}/Holland/GetResultByUserID`,
     INCREASE_UNIVERSITY_VIEW_COUNT: `${BACKEND_URL}/University/IncreaseUniversityViewCount`,
     INCREASE_ARTICLE_VIEW_COUNT: `${BACKEND_URL}/Article/IncreaseArticleViewCount`,
+    RESET_PASSWORD: `${BACKEND_URL}/User/ResetPassword`,
+
 }

@@ -45,11 +45,17 @@ const initState = {
     getUniDetailStatus: STATUS.default,
     rangePoint: null,
     majorsTable: [],
-    uniInfo: null
+    uniInfo: null,
+    checkVerifiedStatus: STATUS.default
 }
 
 const profile = (state = initState, action) => {
     switch (action.type) {
+        case types.SET_CHECK_VERIFIED_STATUS:
+            return {
+                ...state,
+                checkVerifiedStatus: action.status
+            }
         case types.SET_GET_UNI_DETAIL_STATUS:
             return {
                 ...state,

@@ -22,7 +22,8 @@ type InputProps = {
     onSubmitEditing?: Function,
     returnKeyType?: String,
     blurOnSubmit?: Boolean,
-    keyboardType?: String
+    keyboardType?: String,
+    inputStyle?: Object| Array
 }
 
 class Input extends Component<InputProps> {
@@ -49,6 +50,7 @@ class Input extends Component<InputProps> {
             value,
             loading,
             style,
+            inputStyle,
             format,
             onChange,
             blurOnSubmit,
@@ -125,8 +127,8 @@ class Input extends Component<InputProps> {
                             onChangeText={this.onChange}
                             secureTextEntry={password}
                             value={value}
-                            onBlur={Keyboard.dismiss}
-                            style={[ViewStyles.flexDirectionRow, InputStyles.inputStyle]}
+                            // onBlur={Keyboard.dismiss}
+                            style={[ InputStyles.inputStyle, inputStyle]}
                             {...rest}
                         />
                     /* </DismissKeyboard> */
@@ -167,7 +169,8 @@ Input.propTypes = {
     onSubmitEditing: PropTypes.func,
     returnKeyType: PropTypes.string,
     blurOnSubmit: PropTypes.bool,
-    keyboardType: PropTypes.string
+    keyboardType: PropTypes.string,
+    inputStyle: PropTypes.oneOf(PropTypes.object, PropTypes.array),
 }
 
 Input.defaultProps = {
@@ -177,6 +180,7 @@ Input.defaultProps = {
     error: "",
     value: "",
     style: null,
+    inputStyle: null,
     format: "YYYY-MM-DD",
     onChange: () => { },
     onSubmitEditing: () => Keyboard.dismiss(),

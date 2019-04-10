@@ -14,6 +14,7 @@ import RefreshControl from './RefreshControl';
 import ImageUpload from './ImageUpload';
 import NavigationEvents from './NavigationEvents';
 import Carousel from './Carousel';
+import FeedBack from './FeedBack';
 
 export {
    AppContainer,
@@ -31,5 +32,6 @@ export {
    RefreshControl,
    ImageUpload,
    Carousel,
-   NavigationEvents
+   NavigationEvents,
+   FeedBack
 }

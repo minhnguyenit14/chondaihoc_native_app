@@ -26,8 +26,8 @@ class CheckAuthScreen extends React.Component {
         });
         getStorage().then(
             storage => {
-                const userToken = storage.userToken;
-                this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+                const { userToken, isVerified } = storage;
+                this.props.navigation.navigate(userToken ? 'App' : 'Auth', { data: { isVerified } });
             }
         )
     };
