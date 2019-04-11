@@ -9,18 +9,28 @@
         <item name="android:colorAccent">@color/orange</item>
         <!-- <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item> -->
     </style>
-    <style name="SpinnerDatePickerDialog" parent="android:Theme.Material.Light.Dialog">
-         <item name="android:datePickerStyle">@style/MyDatePickerDialogTheme</item>
+     <style name="SpinnerDatePickerDialog" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:datePickerStyle">@style/MyDatePicker</item>
+        <item name="android:colorAccent">@color/orange</item>
+        <item name="android:headerBackground">@color/orange</item>
+        <item name="android:textColorHighlight">@color/orange</item>
+        <item name="colorControlNormal">@color/orange</item>
+        <item name="colorControlActivated">@color/orange</item>
+        <item name="android:colorPrimary">@color/orange</item>
+        <item name="android:textColorPrimary">@color/textMain</item>
     </style>
-    <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
+    <style name="MyDatePicker" parent="android:Widget.Material.DatePicker">
+        <item name="android:datePickerMode">spinner</item>
+        <item name="android:headerBackground">@color/orange</item>
+    </style>
+    <!-- <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
         <item name="android:colorAccent">@color/orange</item>
         <item name="android:colorPrimary">@color/orange</item>
         <item name="android:headerBackground">@color/orange</item>
-        <!-- <item name="android:datePickerStyle">@style/MyDatePickerStyle</item> -->
-    </style> 
+        <item name="android:datePickerStyle">@style/MyDatePickerStyle</item>
+    </style>  -->
     <!-- <style name="MyDatePickerStyle" parent="android:Theme.Material.Light.DatePicker">
-    <item name="android:headerBackground">@color/orange</item> -->
-    <!-- <item name="android:dayOfWeekBackground">@color/chosen_header_bg_color</item>
+    <item name="android:dayOfWeekBackground">@color/chosen_header_bg_color</item>
     <item name="android:dayOfWeekTextAppearance">@color/chosen_header_bg_color</item>
     <item name="android:headerMonthTextAppearance">@color/chosen_header_bg_color</item>
     <item name="android:headerDayOfMonthTextAppearance">@color/chosen_header_bg_color</item>

@@ -8,7 +8,7 @@ import {
 } from '../../helper/getUniversityHelper';
 import { StyleSheet, View, Linking, ScrollView, RefreshControl } from 'react-native';
 import { STATUS } from '../../constants';
-import { ViewStyles, vars, TextStyles } from '../../styles';
+import { ViewStyles, vars, TextStyles, screenWidth } from '../../styles';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import HTML from 'react-native-render-html';
 import { Icon as Icon4 } from 'react-native-elements';
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     spotlight: {
         borderRadius: vars.borderRadius / 4,
         backgroundColor: vars.orange,
-        padding: vars.padding
+        padding: screenWidth < 400 ? vars.padding / 2 : vars.padding
     },
     spotlightText: {
         color: vars.white,

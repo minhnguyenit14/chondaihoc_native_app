@@ -97,7 +97,7 @@ class Login extends Component {
                         }}
                     >
                         <Text style={styles.text}>
-                            Đăng kí
+                            Đăng ký
                     </Text>
                     </TouchableOpacity>
                     <TouchableOpacity

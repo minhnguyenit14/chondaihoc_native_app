@@ -25,7 +25,7 @@ import { View } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { fromLeft } from 'react-navigation-transitions';
 import { ROUTES } from '../../constants';
-import { vars } from '../../styles';
+import { vars, ViewStyles } from '../../styles';
 import CheckAuthScreen from './CheckAuthScreen';
 import { Heading } from '../../common';
 import * as Animatable from 'react-native-animatable';
@@ -127,7 +127,7 @@ const TabStack = createMaterialBottomTabNavigator(
                 const { routeName } = navigation.state;
                 let iconName;
                 let avatar = null;
-                let size = 25;
+                let size = 24;
                 switch (routeName) {
                     case ROUTES.INTRO_TEST.route:
                         iconName = "clipboard-list";
@@ -157,7 +157,9 @@ const TabStack = createMaterialBottomTabNavigator(
                         </View>
                         break;
                 }
-                return avatar || <Icon name={iconName} size={size} color={tintColor} />;
+                return avatar || <View>
+                    <Icon name={iconName} size={size} color={tintColor} />
+                </View>;
             },
             barStyle: {
                 borderTopWidth: 1,

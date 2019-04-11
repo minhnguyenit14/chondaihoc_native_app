@@ -18,6 +18,19 @@ class Question extends Component {
         };
     }
 
+    componentDidMount() {
+        let { data } = this.props;
+        let { answers, pageIndex } = this.props.uniTest;
+        answers[pageIndex - 1].data.map(a => {
+            if (a.QuestionID === data.QuestionID) {
+                this.setState({
+                    value: a.value,
+                    isAnswered: true
+                })
+            };
+        });
+    }
+
     onChange = (value) => {
         this.setState({
             value,
@@ -25,29 +38,29 @@ class Question extends Component {
         })
     }
 
-    updateData = () => {
-        let { value } = this.state;
+    updateData = (value) => {
         let { data } = this.props;
         let { answers, options, pageIndex, totalAnswered, totalQuestions } = this.props.uniTest;
         let tempTotal = totalAnswered;
-
         let temp = answers[pageIndex - 1].data.filter(a => a.QuestionID === data.QuestionID)[0];
         temp ?
             temp.value = value
-            : (tempTotal++ , answers[pageIndex - 1].data.push({
-                QuestionID: data.QuestionID,
-                QuestionSetID: data.QuestionSetID,
-                CharacterKindID: data.CharacterKindID,
-                OptionID: options.filter(o => o.OptionPoint === value)[0].OptionID,
-                value
-            }))
+            : (tempTotal++ ,
 
+                answers[pageIndex - 1].data.push({
+                    QuestionID: data.QuestionID,
+                    QuestionSetID: data.QuestionSetID,
+                    CharacterKindID: data.CharacterKindID,
+                    OptionID: options.filter(o => o.OptionPoint === value)[0].OptionID,
+                    value
+                }))
+
+        this.props.onAnswer(tempTotal === totalQuestions && totalQuestions !== 0);
+        this.props.setAnswers(answers);
         if (tempTotal !== totalAnswered) {
             this.setProgress(tempTotal);
         }
-        this.props.setAnswers(answers);
         this.setPagesAnswered();
-        this.props.onAnswer(totalAnswered === totalQuestions && totalQuestions !== 0);
     }
 
     setProgress = (totalAnswered) => {
@@ -79,11 +92,7 @@ class Question extends Component {
         answers.map(a => {
             if (a.QuestionID === qID) {
                 value = a.value;
-                if(!this.state.isAnswered){
-                    this.setState({
-                    isAnswered: true
-                    })
-                }
+
             };
         });
         return value;
@@ -155,9 +164,7 @@ class Question extends Component {
                         minimumTrackTintColor={vars.textBase}
                         thumbStyle={{ width: vars.padding, height: vars.padding }}
                         onValueChange={this.onChange}
-                        onSlidingComplete={() => {
-                            this.updateData();
-                        }}
+                        onSlidingComplete={() => this.updateData(value)}
                         thumbTintColor={
                             disabled
                                 ? vars.textSecondary

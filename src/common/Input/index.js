@@ -9,6 +9,7 @@ import {
     screenHeight
 } from "../../styles/responsiveFunction";
 import DatePicker from 'react-native-datepicker'
+import vi from 'moment/locale/vi';
 
 type InputProps = {
     placeholder?: String,
@@ -23,7 +24,7 @@ type InputProps = {
     returnKeyType?: String,
     blurOnSubmit?: Boolean,
     keyboardType?: String,
-    inputStyle?: Object| Array
+    inputStyle?: Object | Array
 }
 
 class Input extends Component<InputProps> {
@@ -67,6 +68,7 @@ class Input extends Component<InputProps> {
                     datePicker
                         ?
                         <DatePicker
+                            locale={"vi"}
                             style={{
                                 borderWidth: 1,
                                 borderColor: vars.borderColor,
@@ -128,7 +130,7 @@ class Input extends Component<InputProps> {
                             secureTextEntry={password}
                             value={value}
                             // onBlur={Keyboard.dismiss}
-                            style={[ InputStyles.inputStyle, inputStyle]}
+                            style={[InputStyles.inputStyle, inputStyle]}
                             {...rest}
                         />
                     /* </DismissKeyboard> */

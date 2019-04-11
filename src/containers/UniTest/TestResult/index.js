@@ -28,7 +28,7 @@ class TestResult extends Component {
         if (this.props.navigation.state.routeName !== ROUTES.PROFILE.route) {
             setTimeout(() => this.setState({
                 showFeedBack: true
-            }), 2000)
+            }), 3000)
         }
     }
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Heading, Text } from '../../../common';
 import { View, TouchableOpacity } from 'react-native';
-import { ViewStyles, vars } from '../../../styles';
+import { ViewStyles, vars, screenWidth } from '../../../styles';
 import { ROUTES } from '../../../constants';
 import UniSearch from '../../UniSearch';
 import { Icon } from 'react-native-elements';
@@ -12,22 +12,26 @@ class ProfleUniRecommendFilter extends Component {
         let loading = navigation.getParam('loading');
         return {
             headerTitle: (
-                <View style={[ViewStyles.flexDirectionRow]}>
-                    <Heading>{ROUTES.PROFILE_UNI_RECOMMEND_FILTER.header}</Heading>
+                <React.Fragment>
+                    <Heading style={[
+                        ViewStyles.flexCenterVertical,
+                        { maxWidth: '70%' }
+                    ]}>
+                        {ROUTES.PROFILE_UNI_RECOMMEND_FILTER.header}
+                    </Heading>
                     <View style={[
                         ViewStyles.flexCenterVertical,
                         {
-                            marginLeft: 10,
                             paddingHorizontal: vars.padding / 2,
                             borderRadius: 4,
                             backgroundColor: vars.red
                         }
                     ]}>
-                        <Text style={{ color: vars.white }}>
+                        <Text numberOfLines={1} style={{ color: vars.white }}>
                             {total} Kết quả
                         </Text>
                     </View>
-                </View>
+                </React.Fragment>
             ),
             headerRight: (
                 <TouchableOpacity

@@ -12,22 +12,26 @@ class UniRecommendFilter extends Component {
         let loading = navigation.getParam('loading');
         return {
             headerTitle: (
-                <View style={[ViewStyles.flexDirectionRow]}>
-                    <Heading>{ROUTES.UNI_RECOMMEND_FILTER.header}</Heading>
+                <React.Fragment>
+                    <Heading style={[
+                        ViewStyles.flexCenterVertical,
+                        { maxWidth: '70%' }
+                    ]}>
+                        {ROUTES.UNI_RECOMMEND_FILTER.header}
+                    </Heading>
                     <View style={[
                         ViewStyles.flexCenterVertical,
                         {
-                            marginLeft: 10,
                             paddingHorizontal: vars.padding / 2,
                             borderRadius: 4,
                             backgroundColor: vars.red
                         }
                     ]}>
-                        <Text style={{ color: vars.white }}>
+                        <Text numberOfLines={1} style={{ color: vars.white }}>
                             {total} Kết quả
                         </Text>
                     </View>
-                </View>
+                </React.Fragment>
             ),
             headerRight: (
                 <TouchableOpacity

@@ -2,4 +2,5 @@
     <string name="app_name">Chọn đại học</string>
     <color name="white">#FFFFFF</color>
     <color name="orange">#F6AB2F</color>
+    <color name="textMain">#3E3F42</color>
 </resources>
