@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { AppContainer,  } from '../../../common';
-import {NavigationEvents} from 'react-navigation';
+import { AppContainer, Button } from '../../../common';
+import { NavigationEvents } from 'react-navigation';
 import { ROUTES, STATUS } from '../../../constants';
 import {
     View,
@@ -35,9 +35,9 @@ class Test extends Component {
         return {
             headerTitle: ROUTES.TEST.header,
             headerRight: (
-                <View style={ViewStyles.flexDirectionRow}>
+                <View style={[{ height: '100%' }, ViewStyles.flexDirectionRow,]}>
                     <TouchableOpacity
-                        style={{ paddingHorizontal: vars.padding }}
+                        style={[ViewStyles.flexCenterVertical, { paddingHorizontal: vars.padding }]}
                         hitSlop={{
                             top: 20,
                             left: 20,
@@ -48,7 +48,8 @@ class Test extends Component {
                     >
                         <Icon name="cog" type="font-awesome" color={vars.orange} />
                     </TouchableOpacity>
-                    <TouchableOpacity
+
+                    {/* <TouchableOpacity
                         disabled={disabled}
                         style={{ paddingHorizontal: vars.padding }}
                         hitSlop={{
@@ -60,7 +61,21 @@ class Test extends Component {
                         onPress={navigation.getParam('submit')}
                     >
                         <Icon name="paper-plane" type="font-awesome" color={disabled ? vars.textSecondary : vars.orange} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
+                    <Button
+                        disabled={disabled}
+                        title="Hoàn thành"
+                        onPress={navigation.getParam('submit')}
+                        style={[ViewStyles.flexCenterVertical, { marginRight: vars.margin }]}
+                        buttonStyle={[
+                            {
+                                flex: .6,
+                                minHeight: undefined,
+                                maxWidth: screenWidth * .3
+                            },
+                            !disabled && { backgroundColor: vars.logo }
+                        ]}
+                    />
                 </View>
             )
         }
@@ -77,7 +92,7 @@ class Test extends Component {
         this.getData();
     }
 
-    checkSubmit= () => {
+    checkSubmit = () => {
         let { totalQuestions, totalAnswered } = this.props.uniTest;
         let disabled = (totalAnswered === totalQuestions && totalQuestions !== 0) ? false : true
         this.props.navigation.setParams({
@@ -247,7 +262,7 @@ class Test extends Component {
                                 value={testProgress}
                                 maxValue={100}
                                 barEasing='bounce'
-                                backgroundColor={isFullAnswerToActiveProgress?vars.green :vars.orange}
+                                backgroundColor={isFullAnswerToActiveProgress ? vars.green : vars.orange}
                                 backgroundColorOnComplete={vars.green}
                             />
                             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -256,7 +271,7 @@ class Test extends Component {
                         </View>
                 }
             >
-            <NavigationEvents onWillFocus={this.checkSubmit}/>
+                <NavigationEvents onWillFocus={this.checkSubmit} />
                 {loadingQ ||
                     <FlatList
                         data={questions}
