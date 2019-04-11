@@ -9,8 +9,8 @@ import {
 const initState = {
     userFullName: "",
     userID: "",
-    userEmail: { data: "minhnguyenit14@gmail.com", error: "" },
-    userPassword: { data: "123456", error: "" },
+    userEmail: { data: "", error: "" },
+    userPassword: { data: "", error: "" },
     loginStatus: STATUS.default,
     loginError: "",
     formError: ""

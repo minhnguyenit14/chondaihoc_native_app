@@ -12,7 +12,7 @@ import { ViewStyles, vars, screenWidth, screenHeight } from '../../styles';
 import { Title, Input, Button, Caption } from '../../common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import * as Animatable from 'react-native-animatable';
-import { getStorage } from '../../helper/axiosHelper';
+import { getStorage, post } from '../../helper/axiosHelper';
 import { API, STATUS } from '../../constants';
 
 type FeedBackProps = {
@@ -68,19 +68,15 @@ class FeedBack extends Component<FeedBackProps> {
             error = "Bạn phải xác thực email để thực hiện chức năng này";
         else if (value.replace(/ /g, '').length === 0)
             error = "Bạn cần nhập đánh giá trước khi gửi";
-
-        if (error !== "") {
-            this.setState({
-                error
-            })
-            return;
-        } else {
-            this.setState({
-                error
-            })
-            this.feedbackAct(starCount, value);
+        this.setState({
+            error
+        })
+        if (error === "") {
+            this.feedbackAct(starCount, value, () => {
+                this.props.onFeedBackSuccess();
+            });
         }
-        this.props.onFeedBackSuccess();
+
     }
 
     feedbackAct = (rate, feedbackContent, callbackSuccess) => {
@@ -102,22 +98,19 @@ class FeedBack extends Component<FeedBackProps> {
                     this.setFeedBackStatus(STATUS.error)
                 }
                 else {
-                    try {
-                        this.setFeedBackStatus(STATUS.success)
-                        Alert.alert(
-                            "Thành công!",
-                            "Cám ơn bạn đã đánh giá và phản hồi",
-                            [
-                                {
-                                    text: "OK",
-                                }
-                            ],
-                            { cancelable: true }
-                        )
-                    }
-                    catch (e) {
-                        this.setFeedBackStatus(STATUS.error)
-                    }
+                    this.setFeedBackStatus(STATUS.success);
+                    callbackSuccess();
+                    Alert.alert(
+                        "Thành công!",
+                        "Cám ơn bạn đã đánh giá và phản hồi",
+                        [
+                            {
+                                text: "OK",
+                            }
+                        ],
+                        { cancelable: true }
+                    )
+                    this.setFeedBackStatus(STATUS.error)
                 }
             },
             rej => {
@@ -161,7 +154,7 @@ class FeedBack extends Component<FeedBackProps> {
                 transparent={true}
             >
                 <TouchableWithoutFeedback
-                    // onPress={this.onRequestClose}
+                // onPress={this.onRequestClose}
                 >
                     <View style={[
                         styles.container,

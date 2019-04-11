@@ -318,7 +318,7 @@ class Profile extends Component {
                             onRequestClose={this.closeEdit}
                         />
                         <FeedBack
-                            onUpdateSuccess={this.closeEdit}
+                            onFeedBackSuccess={this.closeEdit}
                             visible={feedBack}
                             onRequestClose={this.closeEdit}
                         />
