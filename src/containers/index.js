@@ -12,6 +12,7 @@ import {
     TestResult,
     UniRecommendFilter
 } from './UniTest';
+import CheckAuthScreen from './CheckAuthScreen'
 
 export {
     Login,
@@ -25,5 +26,6 @@ export {
     Test,
     TestResult,
     UniRecommendFilter,
-    ProfileUniRecommendFilter
+    ProfileUniRecommendFilter,
+    CheckAuthScreen
 }

@@ -80,21 +80,22 @@ class Profile extends Component {
             isEdit: false,
             changePass: false,
             feedBack: false,
-            isVerified: null
+            // isVerified: null
         };
     }
 
     componentDidMount() {
         getStorage().then(storage => {
             this.props.navigation.setParams({ isVerified: storage.isVerified });
-            this.setState({
-                isVerified: storage.isVerified
-            })
+            // this.setState({
+            //     isVerified: storage.isVerified
+            // })
+            this.getProfile(storage.userID);
+            this.getTestResult(storage.userID);
         })
         this.props.navigation.setParams({
             logout: this._logout
         });
-        this.getProfile();
     }
 
     getProfile = (userID = null) => {
@@ -105,11 +106,10 @@ class Profile extends Component {
                     // userFullName
                 } = data;
                 this.setState({
-                    avatarUrl: userAvatar === null ? null :AVATAR_PATH.replace("name", userAvatar)
+                    avatarUrl: !userAvatar ? null : AVATAR_PATH.replace("name", userAvatar)
                     // userFullName
                 });
             });
-            this.getTestResult(userID);
         } else {
             getStorage().then(
                 storage => {
@@ -120,12 +120,10 @@ class Profile extends Component {
                             // userFullName
                         } = data;
                         this.setState({
-                            avatarUrl: userAvatar === null ? null :AVATAR_PATH.replace("name", userAvatar),
-                            userAvatar
+                            avatarUrl: !userAvatar ? null : AVATAR_PATH.replace("name", userAvatar),
                             // userFullName
                         });
                     });
-                    this.getTestResult(userID);
                 }
             )
         }
@@ -223,63 +221,63 @@ class Profile extends Component {
         )
     }
 
-    checkVerified = () => {
-        getStorage().then(
-            storage => {
-                this.props.checkVerified(storage.userID, (isVerified) => {
-                    this.props.navigation.setParams({ isVerified });
-                    this.setState({
-                        isVerified
-                    })
-                    if (isVerified) {
-                        Alert.alert(
-                            "Thành công!",
-                            "Tài khoản của bạn đã được xác thực",
-                            [
-                                {
-                                    text: "Ok"
-                                }
-                            ]
-                        )
-                    } else {
-                        Alert.alert(
-                            "Chưa xác thực!",
-                            "Tài khoản của bạn chưa thực hiện xác thực email, bạn vui lòng kiểm tra email và xác thực",
-                            [
-                                {
-                                    text: "Ok"
-                                }
-                            ]
-                        )
-                    }
-                    this.props.navigation.navigate('App', { data: { isVerified } });
-                    setStorage({
-                        ...storage,
-                        isVerified
-                    })
-                })
-            }
-        )
-    }
+    // checkVerified = () => {
+    //     getStorage().then(
+    //         storage => {
+    //             this.props.checkVerified(storage.userID, (isVerified) => {
+    //                 this.props.navigation.setParams({ isVerified });
+    //                 this.setState({
+    //                     isVerified
+    //                 })
+    //                 if (isVerified) {
+    //                     Alert.alert(
+    //                         "Thành công!",
+    //                         "Tài khoản của bạn đã được xác thực",
+    //                         [
+    //                             {
+    //                                 text: "Ok"
+    //                             }
+    //                         ]
+    //                     )
+    //                 } else {
+    //                     Alert.alert(
+    //                         "Chưa xác thực!",
+    //                         "Tài khoản của bạn chưa thực hiện xác thực email, bạn vui lòng kiểm tra email và xác thực",
+    //                         [
+    //                             {
+    //                                 text: "Ok"
+    //                             }
+    //                         ]
+    //                     )
+    //                 }
+    //                 this.props.navigation.navigate('App', { data: { isVerified } });
+    //                 setStorage({
+    //                     ...storage,
+    //                     isVerified
+    //                 })
+    //             })
+    //         }
+    //     )
+    // }
 
-    reCheckVerified = () => {
-        Alert.alert(
-            "Chú ý!",
-            "Tài khoản của bạn chưa được xác thực, ấn Xác thực để kiểm tra nếu bạn đã xác thực",
-            [
-                {
-                    text: "Hủy",
-                    style: "cancel"
-                },
-                {
-                    text: "Xác thực",
-                    onPress: this.checkVerified
-                }
+    // reCheckVerified = () => {
+    //     Alert.alert(
+    //         "Chú ý!",
+    //         "Tài khoản của bạn chưa được xác thực, ấn Xác thực để kiểm tra nếu bạn đã xác thực",
+    //         [
+    //             {
+    //                 text: "Hủy",
+    //                 style: "cancel"
+    //             },
+    //             {
+    //                 text: "Xác thực",
+    //                 onPress: this.checkVerified
+    //             }
 
-            ],
-            { cancelable: true }
-        )
-    }
+    //         ],
+    //         { cancelable: true }
+    //     )
+    // }
 
     render() {
         let {
@@ -302,10 +300,10 @@ class Profile extends Component {
         let getTestLoading = getTestResultByUserIDStatus === STATUS.loading && <Loading dot />;
         let color = loading ? vars.borderColorDarker : vars.primaryHover;
         let avaLoading = uploadTempImageStatus === STATUS.loading || uploadImageStatus === STATUS.loading || getProfileStatus === STATUS.loading;
-        let checkVerifiedLoading = checkVerifiedStatus === STATUS.loading
-            && <View style={[styles.iconCheckVerified, { right: 5 }]}>
-                <Loading />
-            </View>
+        // let checkVerifiedLoading = checkVerifiedStatus === STATUS.loading
+        //     && <View style={[styles.iconCheckVerified, { right: 5 }]}>
+        //         <Loading />
+        //     </View>
 
         return (
             <AppContainer
@@ -352,7 +350,7 @@ class Profile extends Component {
                             </View>
                         </TouchableOpacity>
                     </View>
-                    {!this.state.isVerified && this.state.isVerified !== null && < View style={[styles.changePass, styles.checkVerified]}>
+                    {/* {!this.state.isVerified && this.state.isVerified !== null && < View style={[styles.changePass, styles.checkVerified]}>
                         <TouchableOpacity
                             disabled={loading}
                             onPress={this.reCheckVerified}
@@ -365,7 +363,7 @@ class Profile extends Component {
                                 size={vars.fontSizeStandard}
                             />}
                         </TouchableOpacity>
-                    </View>}
+                    </View>} */}
                     < View style={styles.editContainer}>
                         <TouchableOpacity
                             disabled={loading}
@@ -446,7 +444,7 @@ const styles = StyleSheet.create({
     },
     iconFeedBack: {
         left: vars.padding / 2,
-        bottom: vars.padding
+        bottom: vars.padding / 1.5
     },
     checkVerified: {
         right: undefined,

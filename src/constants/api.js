@@ -23,5 +23,7 @@ export default API = {
     INCREASE_UNIVERSITY_VIEW_COUNT: `${BACKEND_URL}/University/IncreaseUniversityViewCount`,
     INCREASE_ARTICLE_VIEW_COUNT: `${BACKEND_URL}/Article/IncreaseArticleViewCount`,
     RESET_PASSWORD: `${BACKEND_URL}/User/ResetPassword`,
-
+    CHECK_MOBILE_VERSION: `${BACKEND_URL}/MobileVersion/GetLastestVersion`,
+    UPDATE_USER_STATUS: `${BACKEND_URL}/User/UpdateLastestRequest`,
+    RE_SEND_VERIFY_EMAIL: `${BACKEND_URL}/User/ReSendVerifyEmail`,
 }

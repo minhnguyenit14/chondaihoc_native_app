@@ -50,11 +50,10 @@ class UniSearch extends PureComponent {
         let loading = navigation.getParam('loading');
         return {
             headerTitle: (<View style={[ViewStyles.flexDirectionRow]}>
-                <Heading>{ROUTES.UNI_SEARCH.header}</Heading>
+                <Heading header>{ROUTES.UNI_SEARCH.header}</Heading>
                 <View style={[
                     ViewStyles.flexCenterVertical,
                     {
-                        marginLeft: 10,
                         paddingHorizontal: vars.padding / 2,
                         borderRadius: 4,
                         backgroundColor: vars.red
@@ -65,20 +64,22 @@ class UniSearch extends PureComponent {
                         </Text>
                 </View>
             </View>),
-            headerLeft: (
-                <TouchableOpacity
-                    style={{ paddingHorizontal: vars.padding }}
-                    hitSlop={{
-                        top: 20,
-                        left: 20,
-                        bottom: 20,
-                        right: 20
-                    }}
-                    onPress={navigation.getParam('toogleDrawer')}
-                >
-                    <Icon name="filter" type="font-awesome" color={vars.orange} />
-                </TouchableOpacity>
-            ),
+            // headerLeft: (
+            //     <TouchableOpacity
+            //         style={{ paddingHorizontal: vars.padding }}
+            //         hitSlop={{
+            //             top: 20,
+            //             left: 20,
+            //             bottom: 20,
+            //             right: 20
+            //         }}
+            //         onPress={navigation.getParam('toogleDrawer')}
+            //     >
+            //         <Animatable.View useNativeDriver animation="bounce" delay={2000}>
+            //             <Icon name="filter" type="font-awesome" color={vars.orange} />
+            //         </Animatable.View>
+            //     </TouchableOpacity>
+            // ),
             headerRight: (
                 <TouchableOpacity
                     disabled={loading}
@@ -89,7 +90,7 @@ class UniSearch extends PureComponent {
                         bottom: 20,
                         right: 20
                     }}
-                    onPress={navigation.getParam('search')}
+                    onPress={navigation.getParam('toogleDrawer')}
                 >
                     <Icon name="search" type="font-awesome" color={loading ? vars.textSecondary : vars.orange} />
                 </TouchableOpacity>

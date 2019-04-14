@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getUniDetail } from '../../actions/uniDetail'
-import { AppContainer, Heading, Text, Loading, Caption, Image, Carousel } from '../../common';
+import { AppContainer, Heading, Text, Caption, Image, Carousel } from '../../common';
 import {
     getUniversityKind,
     getUniversityType
@@ -21,7 +21,7 @@ class UniDetail extends Component {
     static navigationOptions = ({ navigation }) => {
         let { UniversityName } = navigation.getParam('data');
         return {
-            headerTitle: <Heading>{UniversityName}</Heading>
+            headerTitle: <Heading header style={{ marginBottom: vars.margin / 2 }}>{UniversityName}</Heading>
         }
     }
     constructor(props) {
@@ -151,7 +151,8 @@ class UniDetail extends Component {
                 />}
                 sticker={
                     uniInfo
-                        ? <View style={styles.sticker}>
+                        ?
+                        <View style={styles.sticker}>
                             <View style={[ViewStyles.flexDirectionRow, styles.wrapper]}>
                                 <View style={[ViewStyles.flexDirectionRow, ViewStyles.flexCenterVertical]}>
                                     <View style={[
@@ -173,7 +174,7 @@ class UniDetail extends Component {
                                             {universityType}
                                         </Text>
                                     </View>
-                                    <View style={[styles.commonType, styles.uKind]}>
+                                    <View style={[styles.commonType]}>
                                         <Text style={styles.tag}>
                                             {universityKind}
                                         </Text>
@@ -270,52 +271,56 @@ class UniDetail extends Component {
                             </View>
                         </View>
                         {
-                            universityShortDescription &&
-                            <View style={[styles.block, styles.shortDes]}>
-                                <Caption>
-                                    {universityShortDescription}
-                                </Caption>
-                            </View>
+                            universityShortDescription
+                                ? <View style={[styles.block, styles.shortDes]}>
+                                    <Caption>
+                                        {universityShortDescription}
+                                    </Caption>
+                                </View>
+                                : null
                         }
                         <Carousel images={universityImages} />
                         {
-                            UniversityLongDescription &&
-                            <View style={styles.html}>
-                                <HTML
-                                    tagsStyles={{
-                                        span: {
-                                            backgroundColor: 'transparent',
-                                            // color: vars.textMain
-                                        },
-                                    }}
-                                    baseFontStyle={TextStyles.appFont}
-                                    onLinkPress={(e, href) => this.linking(href)}
-                                    html={UniversityLongDescription} />
-                            </View>
+                            UniversityLongDescription
+                                ? <View style={styles.html}>
+                                    <HTML
+                                        tagsStyles={{
+                                            span: {
+                                                backgroundColor: 'transparent',
+                                            }
+                                        }}
+                                        baseFontStyle={TextStyles.appFont}
+                                        onLinkPress={(e, href) => this.linking(href)}
+                                        html={UniversityLongDescription} />
+                                </View>
+                                : null
                         }
                         {
-                            UniversityFeeAVG &&
-                            <View style={[
-                                ViewStyles.flexDirectionRow,
-                                styles.block
-                            ]}
-                            >
-                                <View style={[
-                                    ViewStyles.flexCenterVertical,
-                                    { marginRight: vars.margin / 2 }
-                                ]}>
-                                    <Icon
-                                        name="money-check-alt"
-                                        color={vars.logo}
-                                        size={vars.fontSizeLarge}
-                                    />
+                            UniversityFeeAVG ?
+                                <View
+                                    style={[
+                                        ViewStyles.flexDirectionRow,
+                                        styles.block
+                                    ]}
+                                >
+                                    <View style={[
+                                        ViewStyles.flexCenterVertical,
+                                        { marginRight: vars.margin / 2 }
+                                    ]}>
+                                        <Icon
+                                            name="money-check-alt"
+                                            color={vars.logo}
+                                            size={vars.fontSizeLarge}
+                                        />
+                                    </View>
+                                    <Text>
+                                        <Text style={[styles.tag]}>
+                                            {`Học phí: `}
+                                        </Text>
+                                        {this.formatMoney(UniversityFeeAVG)}
+                                    </Text>
                                 </View>
-                                <Text>
-                                    <Text style={[styles.tag]}>
-                                        {`Học phí: `}
-                                    </Text>{this.formatMoney(UniversityFeeAVG)}
-                                </Text>
-                            </View>
+                                : null
                         }
                         {majorsTable.length !== 0 &&
                             <GradeTable
@@ -348,9 +353,6 @@ const styles = StyleSheet.create({
     },
     block: {
         marginBottom: vars.margin
-    },
-    uKind: {
-
     },
     uType: {
         borderRightWidth: 1,

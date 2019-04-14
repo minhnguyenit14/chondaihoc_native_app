@@ -4,6 +4,9 @@ import {
 } from '../../appConfig';
 import qs from 'qs';
 import { AsyncStorage, Alert } from 'react-native';
+import { API } from '../constants';
+
+const INTERVAL_UPDATE_USER_STATUS = 5 * 60 * 1000;
 
 export const post = (url, body = {}, image = false) => {
     if (image) {
@@ -29,6 +32,9 @@ export const post = (url, body = {}, image = false) => {
         return addToken(body).then(
             (bd) => {
                 console.log(bd, url);
+                if (bd.reUpdate && bd.userID) {
+                    reUpdateUserStatus(bd.userID);
+                }
                 return axios(url, {
                     method: "POST",
                     headers: {
@@ -36,7 +42,7 @@ export const post = (url, body = {}, image = false) => {
                         "Content-type": "application/x-www-form-urlencoded",
                     },
                     timeout: 15000,
-                    data: qs.stringify(bd)
+                    data: qs.stringify(bd.body)
                 }).then(
                     res => {
                         return handleRespond(res);
@@ -130,13 +136,48 @@ const addToken = (body) => {
     return getStorage().then(
         storage => {
             let userToken = null;
+            let userID = null;
+            let reUpdate = false;
             if (storage) {
+                reUpdate = true;
                 userToken = storage.userToken;
+                userID = storage.userID;
+                if (storage.timeStamp) {
+                    let now = new Date().getTime();
+                    if (now - storage.timeStamp < INTERVAL_UPDATE_USER_STATUS) {
+                        reUpdate = false;
+                    } else {
+                        setStorage({
+                            ...storage,
+                            timeStamp: new Date().getTime()
+                        })
+                    }
+                } else {
+                    setStorage({
+                        ...storage,
+                        timeStamp: new Date().getTime()
+                    })
+                }
             }
             body.userToken = userToken;
-            return body;
+            return { body, reUpdate, userID };
         }
     );
+}
+
+const reUpdateUserStatus = (userID) => {
+    let body = {
+        id: userID
+    }
+    let url = API.UPDATE_USER_STATUS;
+    post(url, body).then(
+        res => {
+            console.log(res)
+        },
+        rej => {
+            // console.warn(rej)
+        }
+    )
 }
 
 export const setStorage = async (value) => {

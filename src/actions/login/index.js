@@ -45,6 +45,35 @@ export const loginAct = (userEmail, userPassword, callBackSuccess) => {
     }
 }
 
+export const updateUserStatus = (userID) => {
+    return dispatch => {
+        let body = {
+            id: userID
+        }
+        let url = API.UPDATE_USER_STATUS;
+        dispatch(setUpdateUserStatus(STATUS.loading))
+        post(url, body).then(
+            res => {
+                console.warn(res)
+                if (res.data.Error) {
+                    dispatch(setUpdateUserStatus(STATUS.error))
+                } else {
+                    dispatch(setUpdateUserStatus(STATUS.success))
+                }
+            },
+            rej => {
+                console.warn(rej)
+                dispatch(setUpdateUserStatus(STATUS.error))
+            }
+        )
+    }
+}
+
+export const setUpdateUserStatus = (status) => ({
+    type: types.SET_UPDATE_USER_STATUS,
+    status
+})
+
 export const setLoginStatus = (status) => ({
     type: types.SET_LOG_IN_STATUS,
     status

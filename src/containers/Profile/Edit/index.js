@@ -212,7 +212,19 @@ class Edit extends PureComponent {
                                 contentContainerStyle={[ViewStyles.container]}
                             >
                                 <TouchableWithoutFeedback>
-                                    <View style={[{ justifyContent: 'space-between' }, changePass ? { flex: .4 } : { flex: .25 }]}>
+                                    <View style={[
+                                        changePass
+                                            ? {
+                                                maxHeight: screenHeight * .55,
+                                                minHeight: 380,
+                                                flex: .43
+                                            }
+                                            : {
+                                                maxHeight: screenHeight * .35,
+                                                minHeight: 260,
+                                                flex: .28
+                                            }
+                                    ]}>
                                         {changePass ? changePassword : edit}
                                         <View style={[
                                             ViewStyles.flexDirectionRow,
@@ -259,7 +271,7 @@ const styles = StyleSheet.create({
         maxWidth: screenWidth * .4
     },
     content: {
-        marginTop: screenHeight * .55,
+        marginTop: screenWidth > 400 ? screenHeight * .6 : screenHeight * .55,
         borderTopLeftRadius: vars.padding,
         borderTopRightRadius: vars.padding,
         paddingVertical: vars.padding,
@@ -267,10 +279,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: vars.padding
     },
     changePass: {
-        marginTop: screenHeight * .4,
+        marginTop: screenWidth > 400 ? screenHeight * .4 : screenHeight * .35,
     },
     btnGroup: {
-        marginBottom: vars.margin,
         alignItems: 'flex-end',
         justifyContent: 'space-between',
         flex: 1,

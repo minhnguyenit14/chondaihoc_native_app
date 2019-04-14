@@ -17,7 +17,8 @@ import {
     Test,
     TestResult,
     UniRecommendFilter,
-    ProfileUniRecommendFilter
+    ProfileUniRecommendFilter,
+    CheckAuthScreen
 } from '../../containers';
 import { getHeaderName } from '../../helper/routeNameTranslator';
 import { Avatar, Badge } from 'react-native-elements';
@@ -26,10 +27,9 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { fromLeft } from 'react-navigation-transitions';
 import { ROUTES } from '../../constants';
 import { vars, ViewStyles } from '../../styles';
-import CheckAuthScreen from './CheckAuthScreen';
 import { Heading } from '../../common';
 import * as Animatable from 'react-native-animatable';
-import { getStorage } from '../../helper/axiosHelper';
+import VerifyButton from './VerifyButton';
 
 const AuthStack = createStackNavigator(
     {
@@ -174,7 +174,14 @@ const TabStack = createMaterialBottomTabNavigator(
 );
 
 const Container = ({ navigation }) => {
-    return <TabStack screenProps={navigation.getParam("data")} navigation={navigation} />
+    let data = navigation.getParam("data");
+    return <React.Fragment>
+        <TabStack screenProps={data} navigation={navigation} />
+        {
+            data.isVerified ||
+            <VerifyButton navigation={navigation} />
+        }
+    </React.Fragment>
 };
 
 Container.router = TabStack.router;

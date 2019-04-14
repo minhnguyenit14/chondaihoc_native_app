@@ -23,12 +23,7 @@ class GradeTable extends Component {
 
     renderIntro = () => {
         return <View style={styles.introWrapper}>
-            <View>
-                <Caption style={styles.intro}>
-                    [Tên khối ngành]
-                </Caption>
-            </View>
-            <View style={[ViewStyles.flexDirectionRow, {justifyContent: 'space-between'}]}>
+            <View style={[ViewStyles.flexDirectionRow, { justifyContent: 'space-between' }]}>
                 <Caption style={[styles.intro]}>
                     [Tên ngành]
                 </Caption>
@@ -69,7 +64,7 @@ const styles = StyleSheet.create({
         paddingVertical: vars.margin,
     },
     introWrapper: {
-        flex: 1, 
+        flex: 1,
         paddingHorizontal: vars.padding,
         paddingBottom: vars.padding
     },

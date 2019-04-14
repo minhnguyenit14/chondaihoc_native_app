@@ -23,8 +23,8 @@ class Image extends Component<ImageProps> {
         super(props);
         this.state = {
             error: false,
-            uri: '',
             isLoading: false,
+            uri:'',
             opened: false
         };
         this.fastImg = null;
@@ -40,8 +40,8 @@ class Image extends Component<ImageProps> {
     }
 
     setStatus = (error = true, isLoading = false, type) => {
-        // console.log(type)
-        if (this.state.error || error || this.state.isLoading) {
+        // console.log(this.props.uri, isLoading, type)
+        if (this.state.error || error || this.state.isLoading || (isLoading && this.props.uri)) {
             this.setState({
                 error,
                 isLoading
@@ -62,6 +62,7 @@ class Image extends Component<ImageProps> {
             errorCaptionStyle
         } = this.props;
         let { error, isLoading, opened } = this.state;
+
         let status = error
             ? <View style={[ViewStyles.container, ViewStyles.flexCenter]}>
                 <Icon

@@ -13,12 +13,18 @@ const initState = {
     userPassword: { data: "", error: "" },
     loginStatus: STATUS.default,
     loginError: "",
-    formError: ""
+    formError: "",
+    updateUserStatus: STATUS.default
 }
 
 const login = (state = initState, action) => {
 
     switch (action.type) {
+        case types.SET_UPDATE_USER_STATUS:
+            return {
+                ...state,
+                updateUserStatus: action.status
+            }
         case types.SET_LOG_IN_STATUS:
             return {
                 ...state,

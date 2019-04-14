@@ -91,6 +91,7 @@ class Input extends Component<InputProps> {
                             disabled={loading}
                             format={format}
                             minDate="01-01-1800"
+                            maxDate={new Date()}
                             confirmBtnText="Chọn"
                             cancelBtnText="Hủy"
                             showIcon={false}

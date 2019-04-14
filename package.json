@@ -1,6 +1,6 @@
 {
   "name": "chondaihoc_native_app",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -16,6 +16,7 @@
     "react-native-datepicker": "^1.7.2",
     "react-native-divider": "^1.0.3",
     "react-native-elements": "^1.1.0",
+    "react-native-exit-app": "^1.0.0",
     "react-native-fast-image": "^5.2.0",
     "react-native-image-crop-picker": "^0.23.1",
     "react-native-indicators": "^0.13.0",

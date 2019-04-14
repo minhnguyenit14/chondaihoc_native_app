@@ -119,6 +119,7 @@ class Blog extends Component {
             onPress={this.onShowMoreButtonClick}
             danger
             loading={loading}
+            disabled={loading}
             title="Xem thêm"
         />
 

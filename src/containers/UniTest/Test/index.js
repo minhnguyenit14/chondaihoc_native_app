@@ -48,20 +48,6 @@ class Test extends Component {
                     >
                         <Icon name="cog" type="font-awesome" color={vars.orange} />
                     </TouchableOpacity>
-
-                    {/* <TouchableOpacity
-                        disabled={disabled}
-                        style={{ paddingHorizontal: vars.padding }}
-                        hitSlop={{
-                            top: 20,
-                            left: 20,
-                            bottom: 20,
-                            right: 20
-                        }}
-                        onPress={navigation.getParam('submit')}
-                    >
-                        <Icon name="paper-plane" type="font-awesome" color={disabled ? vars.textSecondary : vars.orange} />
-                    </TouchableOpacity> */}
                     <Button
                         disabled={disabled}
                         title="Hoàn thành"
@@ -137,11 +123,13 @@ class Test extends Component {
             q.data.map(d => {
                 let min = d.index >= totalQuestions / 2 ? maxValue / 2 : minValue;
                 let max = d.index < totalQuestions / 2 ? maxValue / 2 : maxValue;
+                let value = Math.floor(Math.random() * (max - min + 1) + min);
+                let OptionID = options.filter(o => o.OptionPoint === value)[0].OptionID;
                 autoTemp.push({
                     QuestionID: d.QuestionID,
                     CharacterKindID: d.CharacterKindID,
-                    OptionID: Math.floor(Math.random() * (maxID - minID + 1) + minID),
-                    value: Math.floor(Math.random() * (max - min + 1) + min)
+                    OptionID,
+                    value
                 })
             })
             auto.push({ data: autoTemp });

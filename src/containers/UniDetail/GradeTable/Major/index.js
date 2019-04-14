@@ -23,15 +23,15 @@ class Major extends Component {
                 ]}
             >
                 <ChildMajor
-                    style={[styles.caption, { flex: .5 }]}
+                    style={[styles.caption, { flex: .4 }]}
                     data={d.MajorName}
                 />
                 <ChildMajor
-                    style={[styles.caption, { flex: .3 }]}
+                    style={[styles.caption, { flex: .35 }]}
                     data={d.UniversityMajorDescription}
                 />
                 <ChildMajor
-                    style={[styles.caption, { flex: .1 }]}
+                    style={[styles.caption, { flex: .15 }]}
                     data={d.UniversityMajorPoint}
                 />
             </View >

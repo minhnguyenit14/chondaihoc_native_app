@@ -44,10 +44,12 @@ const styles = StyleSheet.create({
     heading: {
         fontSize: vars.fontSizeHeading,
         color: vars.textMain,
-        fontWeight: vars.fontLightBold
+        fontWeight: vars.fontLightBold,
+        lineHeight: vars.fontSizeStandard*1.5
     },
     header: {
         marginLeft: vars.margin,
+        paddingRight: vars.padding,
         marginTop: vars.margin / 2
     },
     disabled: {

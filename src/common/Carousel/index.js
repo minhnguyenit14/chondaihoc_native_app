@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, findNodeHandle } from 'react-native';
 import RNCarousel, { Pagination, } from 'react-native-snap-carousel';
 import { Image } from '../../common';
-import { screenWidth, vars, screenHeight } from '../../styles';
+import { screenWidth, vars, screenHeight, ViewStyles } from '../../styles';
 
 type CarouselProps = {
     images?: Array
@@ -14,9 +14,26 @@ class Carousel extends Component<CarouselProps> {
         super(props);
         this.state = {
             activeSlide: 0,
-            images: []
+            images: [],
+            outOfWidth: false
         };
+        this.interval = null;
+        this.pagi = null;
     }
+
+    componentDidMount() {
+        this.interval = setInterval(() => {
+            if (this.pagi && this.props.images.length !== 0) {
+                this.pagi.measureLayout(findNodeHandle(this.pagi), ({ width }) => {
+                    this.setState({
+                        outOfWidth: (width >= screenWidth) ? true : false
+                    })
+                })
+                clearInterval(this.interval);
+            }
+        }, 100)
+    }
+
     _renderItem({ item, index }) {
         return <View style={{ width: '100%', height: '100%' }}>
             <Image lightbox uri={item} />
@@ -24,26 +41,35 @@ class Carousel extends Component<CarouselProps> {
     }
 
     get pagination() {
-        const { activeSlide } = this.state;
+        const { activeSlide, outOfWidth } = this.state;
         const { images } = this.props;
         return (
-            <Pagination
-                dotsLength={images.length}
-                activeDotIndex={activeSlide}
+            <View ref={inst => this.pagi = inst}>
+                <Pagination
 
-                dotStyle={{
-                    width: vars.padding / 2,
-                    height: vars.padding / 2,
-                    borderRadius: vars.borderRadius,
-                    marginHorizontal: vars.padding / 3,
-                    backgroundColor: vars.logo
-                }}
-                inactiveDotStyle={{
-                    backgroundColor: vars.textBase
-                }}
-                inactiveDotOpacity={0.4}
-                inactiveDotScale={0.6}
-            />
+                    dotsLength={images.length}
+                    activeDotIndex={activeSlide}
+                    containerStyle={[outOfWidth && {
+                        maxWidth: screenWidth - vars.padding * 2,
+                        justifyContent: 'space-between'
+                    }, { paddingVertical: vars.padding }]}
+                    dotStyle={[
+                        {
+                            width: vars.padding / 2,
+                            height: vars.padding / 2,
+                            borderRadius: vars.borderRadius,
+                            backgroundColor: vars.logo
+                        },
+                        !outOfWidth && { marginHorizontal: vars.margin / 3 }
+                    ]}
+                    inactiveDotStyle={{
+                        backgroundColor: vars.textBase
+                    }}
+                    inactiveDotOpacity={0.4}
+                    inactiveDotScale={0.6}
+                />
+            </View>
+
         );
     }
 
@@ -57,12 +83,14 @@ class Carousel extends Component<CarouselProps> {
                 <RNCarousel
                     inactiveSlideScale={0.9}
                     inactiveSlideOpacity={0.5}
-                    contentContainerCustomStyle={{
-                        marginLeft: -vars.margin,
-                        paddingVertical: 0
-                    }}
+                    contentContainerCustomStyle={[
+                        ViewStyles.flexCenter,
+                        {
+                            marginLeft: -vars.margin,
+                            paddingVertical: 0,
+                        }]}
                     sliderWidth={screenWidth}
-                    itemWidth={screenWidth * .7}
+                    itemWidth={screenWidth * .8}
                     data={images}
                     renderItem={this._renderItem}
                     onSnapToItem={(index) => this.setState({ activeSlide: index })}
