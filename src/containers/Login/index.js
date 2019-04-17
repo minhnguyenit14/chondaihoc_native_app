@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
         marginTop: vars.margin * 2
     },
     bottom: {
-        marginTop: vars.margin * 3,
         width: '100%',
         justifyContent: 'space-between'
     },

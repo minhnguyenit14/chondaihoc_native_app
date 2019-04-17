@@ -271,7 +271,15 @@ const styles = StyleSheet.create({
         maxWidth: screenWidth * .4
     },
     content: {
-        marginTop: screenWidth > 400 ? screenHeight * .6 : screenHeight * .55,
+        marginTop: screenWidth > 400 ? (
+            screenHeight * .4 >= 260
+                ? screenHeight * .6
+                : screenHeight * .5
+        ) : (
+                screenHeight * .45 >= 260
+                    ? screenHeight * .55
+                    : screenHeight * .4
+            ),
         borderTopLeftRadius: vars.padding,
         borderTopRightRadius: vars.padding,
         paddingVertical: vars.padding,
@@ -279,7 +287,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: vars.padding
     },
     changePass: {
-        marginTop: screenWidth > 400 ? screenHeight * .4 : screenHeight * .35,
+        marginTop: screenWidth > 400 ? (
+            screenHeight * .6 >= 380
+                ? screenHeight * .4
+                : screenHeight * .3
+        ) : (
+                screenHeight * .65 >= 380
+                    ? screenHeight * .35
+                    : screenHeight * .25
+            ),
     },
     btnGroup: {
         alignItems: 'flex-end',

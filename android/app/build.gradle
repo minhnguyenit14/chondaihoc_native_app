@@ -106,7 +106,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "0.0.3"
+        versionName "0.0.4"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -150,6 +150,7 @@ android {
 }
 
 dependencies {
+    compile project(':@react-native-community_async-storage')
     implementation project(':react-native-exit-app')
     implementation project(':react-native-image-crop-picker')
     implementation project(':react-native-fast-image')

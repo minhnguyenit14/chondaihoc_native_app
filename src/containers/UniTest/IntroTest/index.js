@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button, AppContainer, Text, Title, Image } from '../../../common';
 import { View, StyleSheet, Alert } from 'react-native';
-import { vars, ViewStyles } from '../../../styles';
+import { vars, ViewStyles, screenWidth } from '../../../styles';
 import { ROUTES } from '../../../constants';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         borderRadius: vars.borderRadius / 4
     },
     title_ctn: {
-        width: '90%'
+        maxWidth: screenWidth * .8
     },
     titleText: {
         color: vars.logo,

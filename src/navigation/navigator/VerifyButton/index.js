@@ -76,7 +76,7 @@ class VerifyButton extends Component {
                     style: "cancel"
                 },
                 {
-                    text: "Chưa có Mail?",
+                    text: "Gửi lại Email",
                     onPress: this.reSendVerifyEmail
                 },
                 {

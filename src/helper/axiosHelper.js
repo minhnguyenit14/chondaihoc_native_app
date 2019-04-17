@@ -3,7 +3,8 @@ import {
     LS_KEY
 } from '../../appConfig';
 import qs from 'qs';
-import { AsyncStorage, Alert } from 'react-native';
+import { Alert } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { API } from '../constants';
 
 const INTERVAL_UPDATE_USER_STATUS = 5 * 60 * 1000;

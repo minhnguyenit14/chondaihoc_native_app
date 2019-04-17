@@ -5,7 +5,7 @@ import LightBox from 'react-native-lightbox';
 import { Image as Img, View } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome5';
 import { vars, ViewStyles, screenHeight, screenWidth } from '../../styles';
-import { Caption, Loading } from '..';
+import { Caption, Loading } from '../../common';
 
 type ImageProps = {
     uri?: String,

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Chọn đại học</string>
-    <string name="version">Phiên bản 0.0.3 (beta)</string>
-    <string name="copyright">© Bản quyền thuộc về\u0020</string>
+    <string name="version">Phiên bản 0.0.4 (beta)</string>
+    <string name="copyright">©2019 Bản quyền thuộc về\u0020</string>
     <color name="white">#FFFFFF</color>
     <color name="orange">#F6AB2F</color>
     <color name="textMain">#3E3F42</color>

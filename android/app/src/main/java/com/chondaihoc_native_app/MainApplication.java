@@ -3,6 +3,7 @@ package com.chondaihoc_native_app;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
 
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -31,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new AsyncStoragePackage(),
             new RNExitAppPackage(),
             new VectorIconsPackage(),
             new SplashScreenReactPackage(),

@@ -24,7 +24,7 @@ class Carousel extends Component<CarouselProps> {
     componentDidMount() {
         this.interval = setInterval(() => {
             if (this.pagi && this.props.images.length !== 0) {
-                this.pagi.measureLayout(findNodeHandle(this.pagi), ({ width }) => {
+                this.pagi.measureLayout(findNodeHandle(this.pagi), (x, y, width, height) => {
                     this.setState({
                         outOfWidth: (width >= screenWidth) ? true : false
                     })
@@ -46,7 +46,6 @@ class Carousel extends Component<CarouselProps> {
         return (
             <View ref={inst => this.pagi = inst}>
                 <Pagination
-
                     dotsLength={images.length}
                     activeDotIndex={activeSlide}
                     containerStyle={[outOfWidth && {
@@ -95,7 +94,9 @@ class Carousel extends Component<CarouselProps> {
                     renderItem={this._renderItem}
                     onSnapToItem={(index) => this.setState({ activeSlide: index })}
                 />
-                {this.pagination}
+                <View style={[ViewStyles.flexCenterHorrizontal]}>
+                    {this.pagination}
+                </View>
             </View>
 
         );
