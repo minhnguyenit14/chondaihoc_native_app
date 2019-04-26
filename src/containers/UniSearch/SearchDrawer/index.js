@@ -145,16 +145,6 @@ class SearchDrawer extends Component {
             value={universitySearch.data}
           />
         </View>
-        {/* <View style={[styles.block]}>
-          <Divider
-            borderColor={dividerColor}
-            color={dividerTextColor}
-            orientation="left"
-          >
-            Khoảng điểm
-            </Divider>
-
-        </View> */}
         <View style={[styles.block]}>
           <Divider
             borderColor={dividerColor}

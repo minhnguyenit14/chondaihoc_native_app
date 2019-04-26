@@ -52,6 +52,7 @@ class BlogDetail extends Component {
             ArticleTitle,
             ArticleContent,
             ArticleAuthor,
+            ArticleShortDescription,
             createDate,
             getBlogDetailStatus
         } = this.state;
@@ -70,11 +71,19 @@ class BlogDetail extends Component {
                         <Heading style={styles.title}>
                             {ArticleTitle}
                         </Heading>
-                        <Caption style={{fontWeight: vars.fontMedium}}>
+                        <Caption style={{ fontWeight: vars.fontMedium }}>
                             {info}
                         </Caption>
                     </View>
 
+                }
+                {
+                    ArticleShortDescription !== "" &&
+                    <View style={styles.shortDes}>
+                        <Caption style={{ fontWeight: vars.fontMedium, fontStyle: 'italic' }}>
+                            {`❝ ${ArticleShortDescription} ❞`}
+                        </Caption>
+                    </View>
                 }
                 {ArticleContent !== "" && <HTML
                     tagsStyles={{
@@ -99,7 +108,8 @@ const styles = StyleSheet.create({
         paddingBottom: vars.padding,
         marginBottom: vars.margin,
         borderBottomWidth: 1,
-        borderColor: vars.borderColor
+        borderColor: vars.borderColor,
+        width: '100%'
     },
     title: {
         fontWeight: vars.fontLightBold,

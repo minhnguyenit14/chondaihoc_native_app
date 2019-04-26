@@ -289,6 +289,7 @@ class UniDetail extends Component {
                                                 backgroundColor: 'transparent',
                                             }
                                         }}
+                                        ignoredStyles={["width", "height"]}
                                         baseFontStyle={TextStyles.appFont}
                                         onLinkPress={(e, href) => this.linking(href)}
                                         html={UniversityLongDescription} />

@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         borderRadius: vars.borderRadius / 4
     },
     title_ctn: {
-        maxWidth: screenWidth * .8
+        maxWidth: 350
     },
     titleText: {
         color: vars.logo,

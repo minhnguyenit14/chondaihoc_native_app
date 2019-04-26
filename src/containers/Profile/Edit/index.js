@@ -19,8 +19,8 @@ import moment from "moment";
 
 const ENTITY_NAME = 'User';
 const EDIT_MODE = 'Edit';
-const PASSWORD_LENGTH = 6;
-const PASSWORD_LENGTH_VALID = "Độ dài mật khẩu ít nhất 6";
+const PASSWORD_INVALID_LENGTH = "Mật khẩu phải có ít nhất 6 kí tự";
+const PASSWORD_INVALID_WITHOUTSPACE = "Mật khẩu không thể chứa khoảng trắng";
 const PASSWORD_COINCIDE = "Mật khẩu không khớp";
 
 class Edit extends PureComponent {
@@ -36,9 +36,12 @@ class Edit extends PureComponent {
     }
     //#region valid
     isPasswordValid = (pass) => {
-        var chkWithoutSpace = (pass.replace(/ /g, '').length >= PASSWORD_LENGTH);
-
-        if (!chkWithoutSpace) return this.getResult(false, PASSWORD_LENGTH_VALID);
+        if (pass.includes(" ")) {
+            return this.getResult(false, PASSWORD_INVALID_WITHOUTSPACE);
+        }
+        else if (pass.length < 6) {
+            return this.getResult(false, PASSWORD_INVALID_LENGTH);
+        }
         else return this.getResult(true, "");
     }
 

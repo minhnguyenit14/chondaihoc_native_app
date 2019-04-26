@@ -15,7 +15,8 @@ import {
 
 const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const EMAIL_UNVALID = "Email không hợp lệ";
-const PASSWORD_LENGTH_VALID = "Mật khẩu phải có ít nhất 6 kí tự";
+const PASSWORD_INVALID_LENGTH = "Mật khẩu phải có ít nhất 6 kí tự";
+const PASSWORD_INVALID_WITHOUTSPACE = "Mật khẩu không thể chứa khoảng trắng";
 const PASSWORD_COINCIDE = "Mật khẩu không khớp";
 const NAME_MSG_ERROR = "Tên không được để trống";
 
@@ -69,9 +70,12 @@ class SignUp extends Component {
     }
 
     isPasswordValid = (pass) => {
-        var chkWithoutSpace = (pass.replace(/ /g, '').length >= 6);
-
-        if (!chkWithoutSpace) return this.getResult(false, PASSWORD_LENGTH_VALID);
+        if (pass.includes(" ")) {
+            return this.getResult(false, PASSWORD_INVALID_WITHOUTSPACE);
+        }
+        else if (pass.length < 6) {
+            return this.getResult(false, PASSWORD_INVALID_LENGTH);
+        }
         else return this.getResult(true, "");
     }
 

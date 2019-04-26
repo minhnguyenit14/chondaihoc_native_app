@@ -15,7 +15,7 @@ class ProfleUniRecommendFilter extends Component {
                 <React.Fragment>
                     <Heading style={[
                         ViewStyles.flexCenterVertical,
-                        { maxWidth: '70%' }
+                        { maxWidth: '65%' }
                     ]}>
                         {ROUTES.PROFILE_UNI_RECOMMEND_FILTER.header}
                     </Heading>
@@ -43,7 +43,7 @@ class ProfleUniRecommendFilter extends Component {
                         bottom: 20,
                         right: 20
                     }}
-                    onPress={navigation.getParam('search', () => { })}
+                    onPress={navigation.getParam('toogleDrawer')}
                 >
                     <Icon name="search" type="font-awesome" color={loading ? vars.textSecondary : vars.orange} />
                 </TouchableOpacity>

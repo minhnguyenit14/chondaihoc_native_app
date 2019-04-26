@@ -64,22 +64,6 @@ class UniSearch extends PureComponent {
                         </Text>
                 </View>
             </View>),
-            // headerLeft: (
-            //     <TouchableOpacity
-            //         style={{ paddingHorizontal: vars.padding }}
-            //         hitSlop={{
-            //             top: 20,
-            //             left: 20,
-            //             bottom: 20,
-            //             right: 20
-            //         }}
-            //         onPress={navigation.getParam('toogleDrawer')}
-            //     >
-            //         <Animatable.View useNativeDriver animation="bounce" delay={2000}>
-            //             <Icon name="filter" type="font-awesome" color={vars.orange} />
-            //         </Animatable.View>
-            //     </TouchableOpacity>
-            // ),
             headerRight: (
                 <TouchableOpacity
                     disabled={loading}
@@ -303,14 +287,15 @@ class UniSearch extends PureComponent {
     _toggleDrawer = () => {
         if (this.drawer) {
             let { toogleDrawer } = this.state;
+            this.setState({
+                toogleDrawer: !toogleDrawer
+            })
             if (!toogleDrawer) {
                 this.drawer.openDrawer();
             } else {
                 this.drawer.closeDrawer();
             }
-            this.setState({
-                toogleDrawer: !toogleDrawer
-            })
+
         }
     }
 
