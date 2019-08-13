@@ -89,11 +89,9 @@ class BlogDetail extends Component {
                     tagsStyles={{
                         span: {
                             backgroundColor: 'transparent'
-                        },
-                        img: {
-                            maxWidth: screenWidth - vars.padding * 2
                         }
                     }}
+                    ignoredStyles={["width", "height"]}
                     baseFontStyle={TextStyles.appFont}
                     onLinkPress={(e, href) => this.linking(href)}
                     html={ArticleContent}

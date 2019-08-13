@@ -7,13 +7,16 @@ import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { NavigationEvents } from 'react-navigation';
 import { setNextTab, setCurrentTab } from '../../../actions/navigationEvents';
-import { getStorage } from '../../../helper/axiosHelper';
+import { getStorage, setStorage } from '../../../helper/axiosHelper';
+import { checkVerified } from '../../../actions/profile';
 
 class IntroTest extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isVerified: false
+            isVerified: false,
+            storage: null,
+            userID: -1
         };
         this.appAnimate = null;
     }
@@ -21,28 +24,53 @@ class IntroTest extends Component {
     checkVerified = () => {
         getStorage().then(
             storage => {
-                let { isVerified } = storage;
+                let {
+                    isVerified,
+                    userID,
+                } = storage;
                 this.setState({
-                    isVerified
+                    isVerified,
+                    userID,
+                    storage
                 })
             }
         )
     }
 
-    goToTest = () => {
+    checkVerifiedAgain = () => {
+        this.props.checkVerified(this.state.userID, (isVerified) => {
+            setStorage({
+                ...this.state.storage,
+                isVerified
+            }).then(() => {
+                this.setState({
+                    isVerified
+                })
+                this.goToTest(false);
+            })
+        })
+    }
+
+    goToTest = (isVerifiedButton = true) => {
         if (!this.state.isVerified) {
             Alert.alert(
                 "Chú ý!",
                 "Bạn chưa xác thực email, vui lòng kiểm tra email và xác thực để làm bài kiểm tra này",
                 [
                     {
-                        text: 'Ok',
+                        text: 'Tôi đã xác thực',
+                        onPress: this.checkVerifiedAgain
                     },
+                    {
+                        text: 'Ok',
+                    }
                 ],
                 { cancelable: true }
             )
         } else {
-            this.props.navigation.push(ROUTES.TEST.route);
+            isVerifiedButton
+                ? this.props.navigation.push(ROUTES.TEST.route)
+                : this.props.navigation.navigate("Loading");
 
         }
     }
@@ -125,15 +153,16 @@ const styles = StyleSheet.create({
     }
 })
 
-const mapDispatchTopProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
     setNextTab: (nextTab) => {
         dispatch(setNextTab(nextTab))
     },
     setCurrentTab: (currentTab) => dispatch(setCurrentTab(currentTab)),
-
+    checkVerified: (userID, callBackSuccess, callBackError) =>
+        dispatch(checkVerified(userID, callBackSuccess, callBackError))
 })
 
 export default connect(
     null,
-    mapDispatchTopProps
+    mapDispatchToProps
 )(IntroTest);
